@@ -4,7 +4,7 @@
 
 ## 宝塔生产部署
 
-**[deploy/宝塔部署指南.md](deploy/宝塔部署指南.md)** · 上传清单 [deploy/BAOTA-UPLOAD.md](deploy/BAOTA-UPLOAD.md)
+**[deploy/宝塔部署指南.md](deploy/宝塔部署指南.md)** · 上传 Git：[deploy/GIT-UPLOAD.md](deploy/GIT-UPLOAD.md) · 上传清单 [deploy/BAOTA-UPLOAD.md](deploy/BAOTA-UPLOAD.md)
 
 上线前清理演示数据：`python backend/scripts/purge_demo_data.py --confirm`
 
