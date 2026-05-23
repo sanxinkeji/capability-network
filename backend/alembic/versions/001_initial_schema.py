@@ -38,4 +38,3 @@ def downgrade() -> None:
     op.execute("DROP TABLE IF EXISTS offers CASCADE")
     op.execute("DROP TABLE IF EXISTS users CASCADE")
     op.execute('DROP EXTENSION IF EXISTS "vector"')
-    op.execute('DROP EXTENSION IF EXISTS "uuid-ossp"')

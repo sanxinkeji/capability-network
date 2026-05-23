@@ -1,13 +1,11 @@
--- capability-network 本地 Windows 开发 schema（无 pgvector）
--- 语义匹配仍走关键词逻辑，embedding 列省略
-
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- capability-network 本地/宝塔 schema（无 pgvector、无需 uuid-ossp）
+-- PostgreSQL 13+ 内置 gen_random_uuid()
 
 -- ---------------------------------------------------------------------------
 -- users
 -- ---------------------------------------------------------------------------
 CREATE TABLE users (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email           VARCHAR(255) NOT NULL UNIQUE,
     password_hash   VARCHAR(255) NOT NULL,
     display_name    VARCHAR(100) NOT NULL,
@@ -31,7 +29,7 @@ CREATE INDEX idx_users_phone  ON users (phone);
 -- offers
 -- ---------------------------------------------------------------------------
 CREATE TABLE offers (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id         UUID         NOT NULL REFERENCES users (id),
     title           VARCHAR(200) NOT NULL,
     description     TEXT         NOT NULL,
@@ -52,7 +50,7 @@ CREATE INDEX idx_offers_category  ON offers (category);
 -- intents
 -- ---------------------------------------------------------------------------
 CREATE TABLE intents (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id         UUID         NOT NULL REFERENCES users (id),
     title           VARCHAR(200) NOT NULL,
     description     TEXT         NOT NULL,
@@ -73,7 +71,7 @@ CREATE INDEX idx_intents_category  ON intents (category);
 -- deals
 -- ---------------------------------------------------------------------------
 CREATE TABLE deals (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     offer_id        UUID         NOT NULL REFERENCES offers (id),
     intent_id       UUID         NOT NULL REFERENCES intents (id),
     buyer_id        UUID         NOT NULL REFERENCES users (id),
@@ -98,7 +96,7 @@ CREATE INDEX idx_deals_status    ON deals (status);
 -- wallets
 -- ---------------------------------------------------------------------------
 CREATE TABLE wallets (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id         UUID         NOT NULL UNIQUE REFERENCES users (id),
     balance_cents   BIGINT       NOT NULL DEFAULT 0 CHECK (balance_cents >= 0),
     frozen_cents    BIGINT       NOT NULL DEFAULT 0 CHECK (frozen_cents >= 0),
@@ -113,7 +111,7 @@ CREATE INDEX idx_wallets_user_id ON wallets (user_id);
 -- wallet_ledger
 -- ---------------------------------------------------------------------------
 CREATE TABLE wallet_ledger (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     wallet_id       UUID         NOT NULL REFERENCES wallets (id),
     deal_id         UUID         REFERENCES deals (id),
     entry_type      VARCHAR(32)  NOT NULL,
@@ -131,7 +129,7 @@ CREATE INDEX idx_wallet_ledger_entry_type ON wallet_ledger (entry_type);
 -- match_logs
 -- ---------------------------------------------------------------------------
 CREATE TABLE match_logs (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     intent_id       UUID         NOT NULL REFERENCES intents (id),
     offer_id        UUID         NOT NULL REFERENCES offers (id),
     score           NUMERIC(5,4) NOT NULL CHECK (score >= 0 AND score <= 1),
@@ -167,7 +165,7 @@ CREATE INDEX idx_deal_extensions_match_log_id ON deal_extensions (match_log_id);
 -- deal_idempotency
 -- ---------------------------------------------------------------------------
 CREATE TABLE deal_idempotency (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     idempotency_key VARCHAR(128) NOT NULL,
     operation       VARCHAR(32)  NOT NULL,
     deal_id         UUID REFERENCES deals (id),
@@ -184,7 +182,7 @@ CREATE INDEX idx_deal_idempotency_expires_at ON deal_idempotency (expires_at);
 -- refresh_tokens
 -- ---------------------------------------------------------------------------
 CREATE TABLE refresh_tokens (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id         UUID         NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     token_hash      VARCHAR(255) NOT NULL UNIQUE,
     expires_at      TIMESTAMPTZ  NOT NULL,
@@ -198,7 +196,7 @@ CREATE INDEX idx_refresh_tokens_user_id ON refresh_tokens (user_id);
 -- api_keys
 -- ---------------------------------------------------------------------------
 CREATE TABLE api_keys (
-    id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id           UUID         NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     platform_user_id  VARCHAR(128) NOT NULL,
     key_hash          VARCHAR(255) NOT NULL,
