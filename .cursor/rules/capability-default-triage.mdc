@@ -1,0 +1,13 @@
+---
+description: capability-network 全局 - 报问题先分诊再动手
+alwaysApply: true
+---
+
+# 先分诊，再改代码
+
+在 capability-network 项目中：
+
+- 若用户消息含 **指挥、分工、该开哪个会话、进度、复制提示词、统筹** → 按 `docs/coordinator-charter.md` 统筹模式，**不写业务代码**
+- 若用户 **描述 bug / 截图 / 不好用** 且 **未** 要求直接修 → 诊断 + 建议会话编号 + 提供提示词；**默认不改** `backend/`、`frontend/src/`
+- 若用户 **明确** 说「直接修、统筹自己改、不用开别的会话」→ 可实施修改
+- 执行会话（提示词以「你是 capability-network 会话 XX」开头）→ 正常实现代码

@@ -1,0 +1,28 @@
+{
+  "name": "capability-network-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ci": "vitest run"
+  },
+  "dependencies": {
+    "axios": "^1.9.0",
+    "pinia": "^3.0.2",
+    "vue": "^3.5.14",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.4",
+    "axios-mock-adapter": "^2.1.0",
+    "happy-dom": "^17.4.4",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^3.1.4",
+    "vue-tsc": "^2.2.10"
+  }
+}
