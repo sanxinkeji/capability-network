@@ -21,6 +21,12 @@ try {
     if ($LASTEXITCODE -eq 0) { $authOk = $true }
 } catch {}
 
+if (-not $authOk -and $env:GH_TOKEN) {
+    Write-Host "使用 GH_TOKEN 登录..." -ForegroundColor Cyan
+    $env:GH_TOKEN | & $Gh auth login --with-token
+    if ($LASTEXITCODE -eq 0) { $authOk = $true }
+}
+
 if (-not $authOk) {
     Write-Host "需要授权 GitHub CLI（只需做一次）。" -ForegroundColor Yellow
     Write-Host "即将打开浏览器，请登录 GitHub 并粘贴终端里显示的验证码。`n"
