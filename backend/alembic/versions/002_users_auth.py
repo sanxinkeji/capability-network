@@ -28,7 +28,7 @@ def upgrade() -> None:
 
     op.execute("""
         CREATE TABLE IF NOT EXISTS refresh_tokens (
-            id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             user_id         UUID         NOT NULL REFERENCES users (id) ON DELETE CASCADE,
             token_hash      VARCHAR(255) NOT NULL UNIQUE,
             expires_at      TIMESTAMPTZ  NOT NULL,
@@ -40,7 +40,7 @@ def upgrade() -> None:
 
     op.execute("""
         CREATE TABLE IF NOT EXISTS api_keys (
-            id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             user_id           UUID         NOT NULL REFERENCES users (id) ON DELETE CASCADE,
             platform_user_id  VARCHAR(128) NOT NULL,
             key_hash          VARCHAR(255) NOT NULL,

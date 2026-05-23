@@ -18,7 +18,7 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.execute("""
         CREATE TABLE IF NOT EXISTS payment_orders (
-            id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             user_id         UUID NOT NULL REFERENCES users (id),
             amount_cents    BIGINT NOT NULL,
             currency        VARCHAR(3) NOT NULL DEFAULT 'CNY',
@@ -40,7 +40,7 @@ def upgrade() -> None:
     )
     op.execute("""
         CREATE TABLE IF NOT EXISTS withdraw_requests (
-            id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             user_id         UUID NOT NULL REFERENCES users (id),
             amount_cents    BIGINT NOT NULL,
             status          VARCHAR(16) NOT NULL DEFAULT 'pending',

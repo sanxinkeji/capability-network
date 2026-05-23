@@ -42,7 +42,7 @@ def upgrade() -> None:
     """)
     op.execute("""
         CREATE TABLE IF NOT EXISTS admin_audit_logs (
-            id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             admin_id     UUID NOT NULL REFERENCES users (id),
             action       VARCHAR(64) NOT NULL,
             target_type  VARCHAR(32),

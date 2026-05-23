@@ -18,7 +18,7 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.execute("""
         CREATE TABLE IF NOT EXISTS deal_idempotency (
-            id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             idempotency_key VARCHAR(128) NOT NULL,
             operation       VARCHAR(32)  NOT NULL,
             deal_id         UUID REFERENCES deals (id),
