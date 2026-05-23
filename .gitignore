@@ -19,3 +19,4 @@ node_modules/
 dist-ssr/
 backups/
 *.log
+deploy/gh-auth-log.txt
