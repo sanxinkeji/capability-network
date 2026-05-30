@@ -14,10 +14,13 @@ from app.deals.schemas import (
     DealCreateRequest,
     DealDeliverRequest,
     DealDisputeRequest,
+    DealBuyFromOfferRequest,
+    DealMessageCreateRequest,
     WebhookRegisterRequest,
     WebhookRegistrationResponse,
 )
 from app.deals.service import (
+    buy_from_offer,
     confirm_deal,
     create_deal,
     deliver_deal,
@@ -27,6 +30,7 @@ from app.deals.service import (
     pay_deal,
     refund_deal,
 )
+from app.deals.messages import list_deal_messages, post_deal_message
 from app.deals.webhooks import list_webhooks, register_webhook
 from app.schemas.response import success
 
@@ -97,6 +101,42 @@ async def list_deals_endpoint(
 ):
     data = await list_deals(db, current=current, page=page, page_size=page_size)
     return success(data)
+
+
+@router.post("/buy-from-offer")
+async def buy_from_offer_endpoint(
+    payload: DealBuyFromOfferRequest,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current: Annotated[CurrentUser, Depends(get_current_user)],
+):
+    result = await buy_from_offer(
+        db,
+        current=current,
+        offer_id=payload.offer_id,
+        buyer_note=payload.buyer_note,
+    )
+    return success(result.model_dump())
+
+
+@router.get("/{deal_id}/messages")
+async def list_deal_messages_endpoint(
+    deal_id: UUID,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current: Annotated[CurrentUser, Depends(get_current_user)],
+):
+    data = await list_deal_messages(db, deal_id=deal_id, current=current)
+    return success(data.model_dump())
+
+
+@router.post("/{deal_id}/messages")
+async def post_deal_message_endpoint(
+    deal_id: UUID,
+    payload: DealMessageCreateRequest,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current: Annotated[CurrentUser, Depends(get_current_user)],
+):
+    message = await post_deal_message(db, deal_id=deal_id, current=current, payload=payload)
+    return success(message.model_dump())
 
 
 @router.get("/{deal_id}")

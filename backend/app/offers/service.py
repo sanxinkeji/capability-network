@@ -33,6 +33,14 @@ async def create_offer(
     current: CurrentUser,
     payload: OfferCreateRequest,
 ) -> OfferResponse:
+    from app.auth.service import get_user_by_id
+    from app.shop.service import require_seller
+
+    user = await get_user_by_id(db, current.id)
+    if user is None:
+        raise_auth_error(code=ERR_OFFER_FORBIDDEN, message="user not found", http_status=403)
+    require_seller(user)
+
     offer = Offer(
         user_id=current.id,
         title=payload.title,
@@ -181,6 +189,32 @@ async def list_marketplace_offers(
     )
     query = _apply_offer_filters(query, category=category, channel=channel)
     return await _paginate_offers(db, query, page=page, page_size=page_size)
+
+
+async def get_marketplace_offer(
+    db: AsyncSession,
+    *,
+    offer_id: UUID,
+    current: CurrentUser,
+) -> dict:
+    from app.auth.models import User
+
+    offer = await _get_offer_or_404(db, offer_id)
+    if offer.status != OfferStatus.PUBLISHED:
+        raise_auth_error(
+            code=ERR_OFFER_INVALID_STATUS,
+            message="offer is not published",
+            http_status=404,
+        )
+    if offer.user_id == current.id:
+        raise_auth_error(code=ERR_OFFER_FORBIDDEN, message="cannot buy own offer", http_status=403)
+
+    seller = (
+        await db.execute(select(User).where(User.id == offer.user_id))
+    ).scalar_one_or_none()
+    payload = offer_to_response(offer).model_dump()
+    payload["seller_display_name"] = seller.display_name if seller else None
+    return payload
 
 
 async def publish_offer(

@@ -33,7 +33,7 @@ export interface UserProfile {
   phone: string | null
   display_name: string
   avatar_url: string | null
-  role: 'user' | 'admin'
+  role: 'user' | 'seller' | 'admin'
   status: string
   kyc_level: string
   kyc_status?: 'none' | 'pending' | 'verified'
@@ -41,6 +41,9 @@ export interface UserProfile {
   kyc_id_number_masked?: string | null
   created_at: string
   wallet_balance_cents?: number
+  is_seller?: boolean
+  shop_status?: 'none' | 'pending' | 'approved' | 'rejected'
+  shop_name?: string | null
 }
 
 export interface KycStatusInfo {
@@ -131,6 +134,7 @@ export interface AdminStats {
   wallet_commission_cents?: number
   withdrawals_pending?: number
   kyc_pending?: number
+  shop_applications_pending?: number
   agent_keys_active?: number
   agent_users_total?: number
 }
@@ -370,6 +374,10 @@ export interface Offer {
   updated_at: string
 }
 
+export interface MarketplaceOffer extends Offer {
+  seller_display_name?: string | null
+}
+
 export interface OfferCreatePayload {
   title: string
   description: string
@@ -524,6 +532,24 @@ export interface Deal {
   created_at: string
   updated_at: string
   completed_at: string | null
+}
+
+export type DealMessageSenderRole = 'system' | 'buyer' | 'seller' | 'agent'
+export type DealMessageKind = 'text' | 'delivery' | 'status'
+
+export interface DealMessage {
+  id: string
+  deal_id: string
+  sender_role: DealMessageSenderRole
+  sender_id: string | null
+  body: string
+  kind: DealMessageKind
+  created_at: string
+}
+
+export interface DealMessageList {
+  items: DealMessage[]
+  total: number
 }
 
 export interface Wallet {

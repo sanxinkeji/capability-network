@@ -1,0 +1,602 @@
+/**
+ * 手淘风格 — 覆盖 iOS 玻璃层，购物页回归橙白扁平
+ */
+
+:root {
+  --tb-orange: #ff5000;
+  --tb-orange-dark: #ff4400;
+  --tb-bg: #f5f5f5;
+  --tb-card: #ffffff;
+  --tb-radius: 12px;
+  --tb-radius-sm: 8px;
+}
+
+/* 购物壳：灰底、无 mesh */
+.layout::before,
+.layout.marketing::before {
+  display: none;
+}
+
+.layout {
+  background: var(--tb-bg) !important;
+}
+
+body {
+  background: var(--tb-bg);
+}
+
+.layout .main {
+  padding-top: 0;
+}
+
+@media (max-width: 768px) {
+  .layout .main {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .layout .main-inner {
+    padding: 0;
+  }
+}
+
+/* 移动端顶栏 — 手淘双行 */
+.shop-mobile-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 8px 12px 12px !important;
+  background: linear-gradient(180deg, #ff6034 0%, #ff5000 55%, #ff4400 100%) !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: #fff !important;
+}
+
+.shop-mobile-header__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.shop-mobile-header__brand {
+  color: #fff !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em;
+}
+
+.shop-mobile-header__brand .brand-icon {
+  color: #fff !important;
+}
+
+.shop-mobile-header__actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shop-mobile-header__action {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff !important;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.shop-mobile-header__action--accent {
+  background: #fff;
+  color: var(--color-commerce, #ff5000) !important;
+}
+
+.shop-mobile-header__search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shop-mobile-header__search {
+  flex: 1;
+  min-height: 36px !important;
+  padding: 0 14px !important;
+  background: #fff !important;
+  border-radius: 999px !important;
+  color: #999 !important;
+  font-size: 14px !important;
+  box-shadow: none !important;
+}
+
+.shop-mobile-header__search-btn {
+  flex-shrink: 0;
+  padding: 0 14px;
+  min-height: 36px;
+  border: none;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--tb-orange);
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* 桌面顶栏 */
+.shop-app-header {
+  background: #fff !important;
+  border-bottom: 1px solid #eee !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  backdrop-filter: none !important;
+}
+
+.shop-app-header__search {
+  border: 2px solid var(--tb-orange) !important;
+  background: #fff !important;
+}
+
+.shop-app-header__nav a.router-link-active {
+  color: var(--tb-orange) !important;
+}
+
+/* Tab Bar — 手淘 */
+.tab-bar {
+  background: #fff !important;
+  border-top: 1px solid #e8e8e8 !important;
+  backdrop-filter: none !important;
+  box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.04) !important;
+}
+
+.tab-bar .tab-item.router-link-active {
+  color: var(--tb-orange) !important;
+}
+
+.tab-bar .tab-item.router-link-active .tab-icon {
+  color: var(--tb-orange) !important;
+}
+
+/* 白卡扁平 */
+.layout .main .glass-card,
+.app-page .glass-card,
+.market-page .glass-card {
+  background: var(--tb-card) !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: var(--tb-radius) !important;
+}
+
+/* 商品卡 — 信息流 */
+.product-card {
+  background: var(--tb-card) !important;
+  border-radius: var(--tb-radius-sm) !important;
+  overflow: hidden;
+}
+
+.product-card--feed {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.product-card--feed:active {
+  opacity: 0.92;
+}
+
+.product-card--feed .card-cover {
+  aspect-ratio: 1 !important;
+  border-radius: var(--tb-radius-sm) var(--tb-radius-sm) 0 0;
+}
+
+.product-card--feed .card-body {
+  padding: 8px 8px 10px !important;
+}
+
+.product-card--feed .card-title {
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  line-height: 1.35 !important;
+  color: #333 !important;
+}
+
+.product-card--feed .card-desc,
+.product-card--feed .card-tags,
+.product-card--feed .card-flow-hint,
+.product-card--feed .buy-btn {
+  display: none !important;
+}
+
+.product-card--feed .card-footer {
+  flex-direction: row !important;
+  align-items: baseline !important;
+  padding-top: 4px !important;
+  margin-top: 0 !important;
+}
+
+.product-card--feed .card-price .price-int {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: var(--tb-orange) !important;
+}
+
+.product-card--feed .card-price .price-symbol,
+.product-card--feed .card-price .price-dec {
+  color: var(--tb-orange) !important;
+}
+
+.product-card--feed .card-price .price-unit {
+  font-size: 11px;
+  color: #999;
+}
+
+/* 集市页 */
+.market-page {
+  background: var(--tb-bg);
+}
+
+@media (max-width: 768px) {
+  .market-page {
+    padding: 0 !important;
+  }
+}
+
+.market-kingkong {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px 0;
+  padding: 14px 8px 10px;
+  margin: -8px 10px 10px;
+  background: var(--tb-card);
+  border-radius: var(--tb-radius);
+}
+
+.market-kingkong__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  color: #333;
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.market-kingkong__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  background: linear-gradient(145deg, #fff5f0, #ffe8dc);
+  color: var(--tb-orange);
+}
+
+.market-kingkong__item.active .market-kingkong__icon {
+  background: linear-gradient(145deg, #ff6034, #ff5000);
+  color: #fff;
+}
+
+.market-banner {
+  margin: 0 10px 10px;
+  padding: 14px 16px;
+  border-radius: var(--tb-radius);
+  background: linear-gradient(135deg, #ff8a5c 0%, #ff5000 50%, #ff3366 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.market-banner strong {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.market-banner span {
+  font-size: 12px;
+  opacity: 0.92;
+}
+
+.market-banner__tag {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--tb-orange);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.market-feed-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px 6px;
+  margin: 0;
+}
+
+.market-feed-head__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+.market-feed-head__title::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 14px;
+  margin-right: 6px;
+  vertical-align: -2px;
+  border-radius: 2px;
+  background: var(--tb-orange);
+}
+
+.market-sortbar {
+  display: flex;
+  align-items: center;
+  background: var(--tb-card);
+  margin: 0 0 8px;
+  padding: 0 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.market-sortbar .sort-tab {
+  flex: 1;
+  border: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding: 12px 8px !important;
+  font-size: 14px !important;
+  color: #666 !important;
+  position: relative;
+}
+
+.market-sortbar .sort-tab.active {
+  color: var(--tb-orange) !important;
+  font-weight: 600 !important;
+  background: transparent !important;
+}
+
+.market-sortbar .sort-tab.active::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--tb-orange);
+}
+
+.product-grid--market {
+  gap: 8px !important;
+  padding: 0 8px 8px !important;
+}
+
+@media (min-width: 769px) {
+  .market-kingkong,
+  .market-banner {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .market-kingkong {
+    grid-template-columns: repeat(10, 1fr);
+    margin-top: 0;
+  }
+
+  .product-grid--market {
+    padding: 0 !important;
+    gap: 12px !important;
+  }
+}
+
+/* 营销首页 — 手淘首屏 */
+.home-page.taobao-home .hero {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: linear-gradient(180deg, #ff6034 0%, #ff5000 70%, var(--tb-bg) 70%);
+}
+
+.home-page.taobao-home .hero-bg {
+  display: none;
+}
+
+.home-page.taobao-home .hero-inner {
+  padding: 12px 12px 0;
+}
+
+.home-page.taobao-home .eyebrow,
+.home-page.taobao-home .hero-desc,
+.home-page.taobao-home .hero-trust,
+.home-page.taobao-home .hero-side {
+  display: none;
+}
+
+.home-page.taobao-home .hero h1 {
+  font-size: 0;
+  margin: 0 0 10px;
+}
+
+.home-page.taobao-home .hero-highlight {
+  display: none;
+}
+
+.home-page.taobao-home .hero-search {
+  background: #fff !important;
+  border-radius: 999px !important;
+  padding: 12px 12px 12px 16px !important;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+.home-page.taobao-home .hero-search__go {
+  background: var(--tb-orange) !important;
+  padding: 8px 16px;
+}
+
+.home-page.taobao-home .hero-panel {
+  background: var(--tb-card);
+  border-radius: var(--tb-radius) var(--tb-radius) 0 0;
+  padding: 14px 8px 10px;
+  margin-top: 4px;
+}
+
+.home-page.taobao-home .hero-cats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px 0;
+  overflow: visible;
+  margin: 0;
+  padding: 0;
+}
+
+.home-page.taobao-home .hero-cat-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 4px;
+  background: transparent;
+  border-radius: 0;
+  font-size: 11px;
+  color: #333;
+}
+
+.home-page.taobao-home .hero-cat-chip::before {
+  content: attr(data-icon);
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  background: linear-gradient(145deg, #fff5f0, #ffe8dc);
+}
+
+.home-page.taobao-home .hero-cta {
+  display: none;
+}
+
+.home-page.taobao-home .flow-section {
+  padding: 0 10px;
+}
+
+.home-page.taobao-home .section {
+  padding: 20px 12px;
+}
+
+.home-page.taobao-home .section-title {
+  text-align: left;
+  font-size: 17px;
+}
+
+.home-page.taobao-home .section-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 14px;
+  margin-right: 6px;
+  vertical-align: -2px;
+  border-radius: 2px;
+  background: var(--tb-orange);
+}
+
+.home-page.taobao-home .section-sub {
+  text-align: left;
+  font-size: 13px;
+}
+
+.home-page.taobao-home .feature-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 8px !important;
+}
+
+.home-page.taobao-home .feature-card {
+  padding: 12px !important;
+  text-align: left;
+}
+
+.home-page.taobao-home .feature-icon {
+  justify-content: flex-start;
+  color: var(--tb-orange) !important;
+}
+
+.home-page.taobao-home .feature-card h3 {
+  font-size: 14px;
+}
+
+.home-page.taobao-home .feature-card p {
+  font-size: 12px;
+}
+
+@media (min-width: 769px) {
+  .home-page.taobao-home .hero {
+    background: var(--tb-bg);
+    padding: 24px 0 !important;
+  }
+
+  .home-page.taobao-home .hero-inner {
+    display: block;
+    padding: 0;
+  }
+
+  .home-page.taobao-home .eyebrow,
+  .home-page.taobao-home .hero-desc {
+    display: block;
+  }
+
+  .home-page.taobao-home .hero h1 {
+    font-size: clamp(28px, 4vw, 40px);
+  }
+
+  .home-page.taobao-home .hero-highlight {
+    display: block;
+    background: linear-gradient(135deg, var(--tb-orange), #ff3366);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .home-page.taobao-home .hero-cta {
+    display: flex;
+  }
+
+  .home-page.taobao-home .hero-panel {
+    background: transparent;
+    padding: 0;
+  }
+
+  .home-page.taobao-home .hero-cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .home-page.taobao-home .hero-cat-chip::before {
+    display: none;
+  }
+
+  .home-page.taobao-home .hero-cat-chip {
+    flex-direction: row;
+    padding: 8px 14px;
+    background: var(--tb-card);
+    border-radius: 999px;
+  }
+}

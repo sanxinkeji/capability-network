@@ -1,5 +1,9 @@
 <template>
   <div class="wallet-page app-page">
+    <ShopPageHeader
+      title="我的钱包"
+      subtitle="充值后可在集市一键购买，平台担保托管"
+    />
     <div v-if="welcomeHint" class="success-msg">{{ welcomeHint }}</div>
     <div v-if="error" class="error-msg">{{ error }}</div>
     <div v-if="success" class="success-msg">{{ success }}</div>
@@ -315,6 +319,7 @@ import { useAuthStore } from '@/stores/auth'
 import AppIcon from '@/components/AppIcon.vue'
 import WalletBottomSheet from '@/components/WalletBottomSheet.vue'
 import LoadingSkeleton from '@/components/LoadingSkeleton.vue'
+import ShopPageHeader from '@/components/ShopPageHeader.vue'
 import EmptyState from '@/components/EmptyState.vue'
 
 const route = useRoute()
@@ -655,9 +660,9 @@ onUnmounted(stopPolling)
   padding: 24px 20px 20px;
   margin-bottom: 16px;
   border-radius: 16px;
-  background: linear-gradient(145deg, #1677ff 0%, #0958d9 55%, #003eb3 100%);
+  background: var(--shop-header-gradient);
   color: #fff;
-  box-shadow: 0 12px 32px rgba(22, 119, 255, 0.28);
+  box-shadow: 0 12px 32px rgba(238, 10, 36, 0.25);
 }
 
 .wallet-card__top {

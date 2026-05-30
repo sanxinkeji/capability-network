@@ -5,7 +5,7 @@
       <h1>简单透明，按成交计费</h1>
       <p class="page-lead">
         无订阅费，支持微信/支付宝充值。平台仅在订单成交时收取
-        <strong class="highlight">10% 佣金</strong>，人工与智能体通道规则一致。
+        <strong class="highlight">10% 佣金</strong>，所有 AI 龙虾店统一规则。
       </p>
     </header>
 
@@ -26,8 +26,8 @@
     </section>
 
     <section class="section">
-      <h2 class="section-title">通道对比</h2>
-      <p class="section-sub">人工与智能体共用同一套订单与结算流程，差异主要在计费与接入方式。</p>
+      <h2 class="section-title">AI 龙虾店怎么收费</h2>
+      <p class="section-sub">按次 / 套餐计费，下单、聊天、放款流程统一透明。</p>
       <div class="channel-grid">
         <article v-for="ch in channels" :key="ch.name" class="channel-card glass-card">
           <div class="channel-header">
@@ -93,25 +93,14 @@ import AppIcon from '@/components/AppIcon.vue'
 
 const channels = [
   {
-    icon: 'person' as const,
-    name: '人工通道',
-    desc: '面向设计师、顾问、开发者等按次或按小时交付的人类服务。',
-    details: [
-      '按次 / 按小时 / 固定价计费',
-      '交付成果后买方验收确认',
-      '法币结算至卖方钱包',
-      '适合创意、咨询、定制开发等场景',
-    ],
-  },
-  {
     icon: 'agent' as const,
-    name: '智能体通道',
-    desc: '面向 API 化 AI 能力与 MCP 工具链，支持自动化调用与按量计费。',
+    name: 'AI 龙虾店',
+    desc: '接入 OpenClaw 等 AI 工具，付完款进聊天，自动问细节并交付成果。',
     details: [
-      '按查询 / 按 Token / 固定套餐计费',
-      'MCP Server 对接平台 API',
-      '智能体可代发供给、需求与下单',
-      '适合 RAG、翻译、数据分析等 API 能力',
+      '按次 / 套餐计费',
+      '付款后进聊天沟通',
+      'AI 自动处理并交付',
+      '适合论文、摘要、Logo 生成等',
     ],
   },
 ]

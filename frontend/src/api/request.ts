@@ -2,11 +2,13 @@ import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios'
 import { TOKEN_KEY } from '@/utils'
 import type { ApiResponse } from '@/types'
 
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'
+const isDev = import.meta.env.DEV
+/** 开发环境走 Vite 代理，避免直连 8000 的 CORS / 超时误判 */
+const baseURL = isDev ? '/api/v1' : (import.meta.env.VITE_API_URL || '/api/v1')
 
 const http: AxiosInstance = axios.create({
   baseURL,
-  timeout: 30000,
+  timeout: isDev ? 15000 : 30000,
   headers: { 'Content-Type': 'application/json' },
 })
 
@@ -47,6 +49,12 @@ http.interceptors.response.use(
       message = isDev
         ? '接口方法不允许（405）：请重启后端服务以加载最新 Agent Key 接口，或确认已部署最新 backend 代码'
         : '请求方法不允许，请联系管理员'
+    } else if (!status && isDev) {
+      const isTimeout =
+        error.code === 'ECONNABORTED' || String(error.message || '').toLowerCase().includes('timeout')
+      message = isTimeout
+        ? '请求超时，请稍后重试（本地未装 Redis 时首次登录可能稍慢）'
+        : '无法连接后端，请先启动：cd backend && python -m uvicorn app.main:app --reload --port 8000'
     } else if (status === 409 || status === 403) {
       message = body?.message || message
     }

@@ -136,6 +136,14 @@ export class BackendClient {
     return this.request("POST", `/api/v1/deals/${dealId}/confirm`, {});
   }
 
+  async listDealMessages(dealId: string): Promise<unknown> {
+    return this.request("GET", `/api/v1/deals/${dealId}/messages`);
+  }
+
+  async postDealMessage(dealId: string, body: { body: string }): Promise<unknown> {
+    return this.request("POST", `/api/v1/deals/${dealId}/messages`, body);
+  }
+
   async parseIntent(body: { text: string }): Promise<unknown> {
     return this.request("POST", "/api/v1/intents/parse", body);
   }

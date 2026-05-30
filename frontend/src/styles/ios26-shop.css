@@ -1,0 +1,351 @@
+/**
+ * iOS 26 Liquid Glass — 购物 / App 壳视觉层
+ * 与 tokens.css、commerce-ui.css 协同；购买 CTA 仍用 --color-commerce
+ */
+
+:root {
+  --shop-bg: var(--color-bg-base);
+  --shop-card-radius: var(--radius-card);
+  --shop-glass: rgba(255, 255, 255, 0.62);
+  --shop-glass-strong: rgba(255, 255, 255, 0.78);
+}
+
+/* 分层背景（App + 营销） */
+.layout,
+.marketing {
+  background: var(--color-bg-base);
+  position: relative;
+}
+
+.layout::before,
+.marketing::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 90% 70% at 10% 0%, rgba(0, 122, 255, 0.12), transparent 55%),
+    radial-gradient(ellipse 70% 60% at 95% 8%, rgba(255, 96, 52, 0.1), transparent 50%),
+    radial-gradient(ellipse 80% 50% at 50% 100%, rgba(88, 86, 214, 0.08), transparent 55%),
+    var(--color-bg-base);
+}
+
+body {
+  background: var(--color-bg-base);
+}
+
+/* 恢复 Liquid Glass 卡片（覆盖 commerce-ui 扁平白卡） */
+.layout .main .glass-card,
+.app-page .glass-card,
+.marketing .glass-card {
+  background: var(--shop-glass-strong);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-glass), var(--shadow-inner);
+  border-radius: var(--radius-card);
+}
+
+/* 顶栏 — 桌面 */
+.shop-app-header {
+  background: var(--shop-glass) !important;
+  backdrop-filter: blur(var(--glass-blur-heavy)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(180%);
+  border-bottom: 1px solid var(--color-separator) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset, var(--shadow-glass) !important;
+}
+
+.shop-app-header__search {
+  background: var(--color-fill) !important;
+  border: 1px solid transparent !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.2s, background 0.2s;
+}
+
+.shop-app-header__search:hover {
+  background: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 0 0 3px var(--color-primary-muted);
+}
+
+.shop-app-header__nav a.router-link-active {
+  color: var(--color-primary) !important;
+}
+
+/* 顶栏 — 移动 */
+.shop-mobile-header {
+  background: var(--shop-glass) !important;
+  backdrop-filter: blur(var(--glass-blur-heavy)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(180%);
+  border-bottom: 1px solid var(--color-separator);
+  color: var(--color-label) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) inset;
+}
+
+.shop-mobile-header__brand {
+  color: var(--color-label) !important;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.shop-mobile-header__brand .brand-icon {
+  color: var(--color-primary) !important;
+}
+
+.shop-mobile-header__search {
+  background: var(--color-fill) !important;
+  color: var(--color-label-tertiary) !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.shop-mobile-header__orders {
+  background: var(--color-primary-muted) !important;
+  color: var(--color-primary) !important;
+  font-weight: 600;
+}
+
+/* 浮动 Tab Bar（iOS 26） */
+@media (max-width: 768px) {
+  .tab-bar {
+    left: 12px;
+    right: 12px;
+    bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    width: auto;
+    height: 56px;
+    padding-bottom: 0;
+    border-radius: var(--radius-xl);
+    background: var(--shop-glass-strong);
+    backdrop-filter: blur(var(--glass-blur-heavy)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-glass-lg), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+  }
+
+  .tab-bar .tab-item {
+    min-height: 56px;
+    border-radius: var(--radius-md);
+    margin: 4px 2px;
+    transition: background 0.2s;
+  }
+
+  .tab-bar .tab-item.router-link-active {
+    background: var(--color-primary-muted);
+    color: var(--color-primary);
+  }
+
+  .tab-bar .tab-item.router-link-active .tab-icon {
+    color: var(--color-primary);
+  }
+
+  .layout .main {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px) + 16px);
+  }
+}
+
+/* 商品卡 */
+.product-card {
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-card) !important;
+  overflow: hidden;
+  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.22s;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glass-lg) !important;
+}
+
+.product-card .card-body {
+  background: transparent;
+}
+
+.card-cover {
+  border-bottom: 1px solid var(--color-separator);
+}
+
+/* 订单卡 */
+.order-card {
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-card) !important;
+  overflow: hidden;
+}
+
+.order-card__head {
+  background: var(--color-fill) !important;
+}
+
+/* 信任条 / 页头 */
+.shop-trust-strip,
+.shop-page-head,
+.commerce-page-head {
+  background: var(--shop-glass-strong) !important;
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: var(--shadow-glass);
+}
+
+/* 类目侧栏 */
+.market-sidebar {
+  background: var(--shop-glass-strong) !important;
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: var(--shadow-glass);
+}
+
+.market-sidebar__item.active {
+  background: var(--color-primary-muted) !important;
+  border-left-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
+}
+
+/* 排序 / 类目 chip */
+.category-chip.active,
+.sort-tab.active {
+  background: var(--color-primary-muted) !important;
+  color: var(--color-primary) !important;
+  border-color: rgba(0, 122, 255, 0.25) !important;
+}
+
+.category-chip.active {
+  background: var(--gradient-commerce) !important;
+  color: #fff !important;
+}
+
+/* 空状态 / 引导 */
+.empty-state,
+.guide-banner {
+  background: var(--shop-glass-strong) !important;
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: var(--shadow-glass);
+}
+
+.guide-banner {
+  border-style: solid !important;
+  border-color: rgba(0, 122, 255, 0.15) !important;
+}
+
+/* 营销首页移动端顶栏 */
+@media (max-width: 768px) {
+  .marketing .site-nav {
+    top: 0;
+    margin: 0;
+    width: 100%;
+    border-radius: 0 !important;
+    padding: 10px 16px !important;
+    border-left: none;
+    border-right: none;
+  }
+
+  .marketing main {
+    padding: 0 16px;
+  }
+}
+
+/* 营销顶栏 */
+.marketing .site-nav {
+  background: var(--shop-glass-strong) !important;
+  backdrop-filter: blur(var(--glass-blur-heavy)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(180%);
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: var(--shadow-glass-lg) !important;
+}
+
+.marketing .brand {
+  color: var(--color-label) !important;
+  letter-spacing: -0.02em;
+}
+
+.marketing .brand-icon {
+  color: var(--color-primary) !important;
+}
+
+.marketing .nav-links a.router-link-active,
+.marketing .nav-links a:hover {
+  color: var(--color-primary) !important;
+}
+
+/* 登录注册 */
+.auth-page {
+  position: relative;
+  background: transparent !important;
+}
+
+.auth-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.auth-main {
+  position: relative;
+  z-index: 1;
+}
+
+.auth-card {
+  background: var(--shop-glass-strong) !important;
+  backdrop-filter: blur(var(--glass-blur-heavy)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(180%);
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-card-lg, 24px) !important;
+  box-shadow: var(--shadow-glass-lg) !important;
+  padding: 28px 24px !important;
+}
+
+@media (min-width: 480px) {
+  .auth-card {
+    padding: 36px 32px !important;
+  }
+}
+
+.auth-panel {
+  background: linear-gradient(
+    145deg,
+    rgba(0, 122, 255, 0.85) 0%,
+    rgba(88, 86, 214, 0.75) 50%,
+    rgba(255, 96, 52, 0.65) 100%
+  ) !important;
+}
+
+/* 聊天 */
+.deal-chat-page .chat-header {
+  background: var(--shop-glass) !important;
+  backdrop-filter: blur(var(--glass-blur-heavy));
+  -webkit-backdrop-filter: blur(var(--glass-blur-heavy));
+  color: var(--color-label) !important;
+  border-bottom: 1px solid var(--color-separator);
+}
+
+.deal-chat-page .chat-header h1,
+.deal-chat-page .chat-header__meta,
+.deal-chat-page .chat-header__back,
+.deal-chat-page .chat-header__detail {
+  color: var(--color-label) !important;
+}
+
+.deal-chat-page .chat-messages {
+  background: var(--color-fill) !important;
+  border-radius: var(--radius-card) !important;
+}
+
+/* 底部购买条 */
+.commerce-sticky-bar {
+  background: var(--shop-glass-strong) !important;
+  backdrop-filter: blur(var(--glass-blur-heavy)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(180%);
+  border-top: 1px solid var(--glass-border) !important;
+}
+
+@media (min-width: 769px) {
+  .commerce-sticky-bar {
+    border-radius: var(--radius-card) !important;
+    border: 1px solid var(--glass-border) !important;
+  }
+}

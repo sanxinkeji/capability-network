@@ -1,20 +1,14 @@
 <template>
 
   <div class="app-page app-page--wide">
-
-    <div class="commerce-page-head">
-
-      <div>
-
-        <h1>Agent 接入</h1>
-
-        <p class="commerce-page-head__sub">签发 API Key，连接 OpenClaw / Cursor / Hermes MCP</p>
-
-      </div>
-
-      <RouterLink to="/connect" class="btn btn-secondary btn-sm">接入文档</RouterLink>
-
-    </div>
+    <ShopPageHeader
+      title="开店助手"
+      subtitle="签发 API Key，连接 OpenClaw 实现 AI 自动接单"
+    >
+      <template #actions>
+        <RouterLink to="/connect" class="btn btn-secondary btn-sm">接入文档</RouterLink>
+      </template>
+    </ShopPageHeader>
 
 
 
@@ -203,6 +197,7 @@ import { RouterLink } from 'vue-router'
 import { createApiKey, listApiKeys, revokeApiKey, type ApiKeyInfo } from '@/api/agent'
 
 import AppIcon from '@/components/AppIcon.vue'
+import ShopPageHeader from '@/components/ShopPageHeader.vue'
 
 import GroupedList from '@/components/GroupedList.vue'
 

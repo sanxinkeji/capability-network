@@ -1,0 +1,467 @@
+/**
+ * 技能集市 — 购物 UI（精简版，与 main.css 协同，避免重复覆盖）
+ */
+
+:root {
+  --shop-bg: #f7f7f8;
+  --shop-header-gradient: linear-gradient(135deg, #ff6034 0%, #ee0a24 100%);
+  --shop-card-bg: #ffffff;
+  --shop-card-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+  --shop-card-radius: 12px;
+}
+
+body {
+  background: var(--shop-bg);
+}
+
+/* App 壳 — 覆盖旧版 sidebar grid，统一纵向 flex */
+.layout {
+  background: var(--shop-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 769px) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.layout .main {
+  flex: 1;
+  padding: 12px 16px calc(var(--tab-bar-height) + env(safe-area-inset-bottom, 0px) + 16px);
+}
+
+.layout .main-inner {
+  max-width: 1190px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media (min-width: 769px) {
+  .layout .main {
+    padding: 20px 24px 40px;
+  }
+
+  .layout .tab-bar {
+    display: none;
+  }
+
+  .app-page {
+    max-width: none;
+  }
+
+  .market-page.app-page {
+    max-width: none;
+  }
+
+  .product-grid--market {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+  }
+
+  @media (min-width: 1400px) {
+    .product-grid--market {
+      grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    }
+  }
+
+  .me-page.app-page {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .me-page {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .me-head {
+    grid-column: 1 / -1;
+  }
+
+  .me-orders {
+    grid-column: 1 / -1;
+  }
+
+  .me-logout {
+    grid-column: 1 / -1;
+  }
+}
+
+/* 移动端顶栏（唯一橙红区域） */
+.shop-mobile-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--shop-header-gradient);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.shop-mobile-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.shop-mobile-header__brand .brand-icon {
+  color: #fff;
+}
+
+.shop-mobile-header__search {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 14px;
+  background: #fff;
+  border-radius: 999px;
+  color: var(--color-label-tertiary);
+  font-size: 13px;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shop-mobile-header__orders {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+@media (min-width: 769px) {
+  .shop-mobile-header {
+    display: none;
+  }
+}
+
+/* 信任条 */
+.shop-trust-strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 8px 16px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  background: var(--shop-card-bg);
+  border-radius: var(--shop-card-radius);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  font-size: 12px;
+  color: var(--color-label-secondary);
+}
+
+.shop-trust-strip__item strong {
+  color: var(--color-commerce);
+}
+
+/* 页面头 */
+.shop-page-head,
+.commerce-page-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 14px 16px;
+  background: var(--shop-card-bg);
+  border-radius: var(--shop-card-radius);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.shop-page-head h1,
+.commerce-page-head h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-label);
+}
+
+.shop-page-head__eyebrow {
+  margin: 0 0 2px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-commerce);
+}
+
+.shop-page-head__sub,
+.commerce-page-head__sub {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--color-label-tertiary);
+  line-height: 1.4;
+}
+
+.shop-page-head__actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* App 内卡片：统一白卡 */
+.layout .main .glass-card,
+.app-page .glass-card {
+  background: var(--shop-card-bg);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: none;
+  border-radius: var(--shop-card-radius);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* 商品 / 订单卡 */
+.product-card {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.product-card:hover {
+  box-shadow: var(--shop-card-shadow);
+}
+
+.product-card .buy-btn {
+  border-radius: 999px;
+}
+
+.order-card {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.order-card__head {
+  background: #fafafa;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.order-card__btn--primary {
+  background: var(--gradient-commerce);
+  color: #fff;
+  border-radius: 999px;
+}
+
+/* Tab Bar */
+.tab-bar {
+  background: #fff;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.tab-bar .tab-item.router-link-active .tab-icon {
+  color: var(--color-commerce);
+}
+
+/* 营销站 */
+.marketing {
+  background: var(--shop-bg);
+}
+
+.marketing main {
+  max-width: var(--shop-content-max);
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 var(--space-lg);
+}
+
+.marketing .site-nav {
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.marketing .brand {
+  color: var(--color-commerce);
+}
+
+.marketing .nav-links a.router-link-active,
+.marketing .nav-links a:hover {
+  color: var(--color-commerce);
+}
+
+.marketing .site-footer {
+  background: #1a1a1a;
+  color: #999;
+}
+
+.marketing .site-footer .footer-brand strong {
+  color: #fff;
+}
+
+.marketing .site-footer a {
+  color: #ccc;
+}
+
+/* 登录注册 */
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr;
+  background: transparent;
+  position: relative;
+}
+
+.auth-panel {
+  position: relative;
+  z-index: 1;
+  display: none;
+  background: var(--shop-header-gradient);
+  color: #fff;
+  padding: 48px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-panel h2 {
+  font-size: 28px;
+  margin: 0 0 12px;
+  font-weight: 800;
+}
+
+.auth-panel p {
+  font-size: 15px;
+  opacity: 0.92;
+  line-height: 1.6;
+  max-width: 360px;
+}
+
+.auth-panel__features {
+  margin-top: 24px;
+  list-style: none;
+  padding: 0;
+}
+
+.auth-panel__features li {
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.auth-panel__features li::before {
+  content: '✓ ';
+  font-weight: 700;
+}
+
+.auth-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 32px 28px;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+.auth-nav .brand {
+  color: var(--color-commerce);
+  font-weight: 700;
+}
+
+@media (min-width: 900px) {
+  .auth-page {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .auth-panel {
+    display: flex;
+  }
+}
+
+/* 聊天 */
+.deal-chat-page {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.deal-chat-page .chat-header {
+  background: var(--shop-header-gradient);
+  color: #fff;
+  border: none;
+}
+
+.deal-chat-page .chat-header h1,
+.deal-chat-page .chat-header__meta,
+.deal-chat-page .chat-header__back,
+.deal-chat-page .chat-header__detail {
+  color: #fff;
+}
+
+.deal-chat-page .chat-messages {
+  background: #ececec;
+  border-radius: var(--shop-card-radius);
+  padding: 12px;
+}
+
+/* 空状态 / 引导 */
+.empty-state {
+  background: #fff;
+  border-radius: var(--shop-card-radius);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 36px 24px;
+}
+
+.guide-banner {
+  border: 1px dashed rgba(255, 96, 52, 0.3);
+  border-radius: var(--shop-card-radius);
+}
+
+/* 页面宽度 */
+.app-page {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.app-page--wide,
+.market-page.app-page,
+.offer-detail.app-page,
+.deals-page.app-page {
+  max-width: 960px;
+}
+
+@media (min-width: 769px) {
+  .app-page--wide,
+  .market-page.app-page,
+  .offer-detail.app-page,
+  .deals-page.app-page {
+    max-width: none;
+  }
+}
+
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (min-width: 769px) {
+  .order-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+/* 商品详情 — 布局由 OfferDetailView 组件内 scoped 样式负责 */
+.offer-detail.app-page {
+  max-width: none;
+}

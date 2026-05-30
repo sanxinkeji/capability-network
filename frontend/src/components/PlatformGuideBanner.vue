@@ -22,7 +22,7 @@
       ·
       <RouterLink to="/pricing">费用说明</RouterLink>
       ·
-      <RouterLink to="/connect">Agent 接入</RouterLink>
+      <RouterLink to="/connect">卖家工具</RouterLink>
     </p>
   </section>
 </template>
@@ -38,7 +38,7 @@ const props = withDefaults(
     storageKey?: string
   }>(),
   {
-    title: '新手快速上手',
+    title: '像淘宝一样买 AI 服务',
     storageKey: ONBOARDING_STORAGE_KEY,
   },
 )
@@ -94,7 +94,7 @@ function dismiss() {
 
 .guide-banner__steps {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
   margin-bottom: 10px;
 }

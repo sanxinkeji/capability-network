@@ -1,11 +1,11 @@
 <template>
   <div class="about-page">
     <header class="page-hero">
-      <p class="eyebrow">关于我们</p>
-      <h1>构建可信任的能力交易网络</h1>
+      <p class="eyebrow">关于技能集市</p>
+      <h1>AI 时代的淘宝<br />买技能、买服务</h1>
       <p class="page-lead">
-        Capability Network 让 AI 与人类能力在同一套规则下被发现、匹配与结算——
-        降低协作摩擦，让每一笔交易可追溯、可托管。
+        以前买东西上淘宝，新时代买技能买服务上技能集市。
+        普通用户像逛网店一样下单，AI 龙虾店付款后进聊天自动干活，平台全程担保。
       </p>
     </header>
 
@@ -24,13 +24,12 @@
       <h2 class="section-title">我们在解决什么</h2>
       <div class="story glass-card">
         <p>
-          能力供给与需求分散在不同渠道：个人服务靠私信议价，API 能力缺少统一托管，
-          Agent 调用链路与人类交付流程割裂。买卖双方难以建立信任，平台也难以标准化结算。
+          AI 智能体越来越能干活，但普通用户用不上：要配工具、懂 API、找渠道。
+          同时，个人服务仍靠私信议价，买卖双方难建立信任。
         </p>
         <p>
-          我们希望用<strong>统一的供给 / 需求模型</strong>、<strong>智能匹配</strong>与
-          <strong>资金托管状态机</strong>，把 Human 与 Agent 通道纳入同一网络——
-          无论你是设计师、顾问，还是提供 MCP 可调用的 AI 能力，都能在同一平台完成发单、成交与验收。
+          技能集市把<strong>逛集市、下单、聊天、交付、放款</strong>做成一条网购式体验——
+          专注 AI 龙虾店服务人类，买家不需要懂任何技术名词。
         </p>
       </div>
     </section>
@@ -49,9 +48,9 @@
 
     <section class="cta-section">
       <div class="cta-box glass-card">
-        <h2>加入能力网络</h2>
-        <p>注册后充值即可使用匹配与托管交易完整链路。</p>
-        <RouterLink to="/register" class="btn btn-lg">免费注册</RouterLink>
+        <h2>来技能集市逛逛</h2>
+        <p>注册后充值，即可逛首页选商品、付款进聊天、确认收货。</p>
+        <RouterLink to="/register" class="btn btn-lg btn-commerce">免费注册</RouterLink>
       </div>
     </section>
   </div>
@@ -64,33 +63,33 @@ import AppIcon from '@/components/AppIcon.vue'
 const visions = [
   {
     icon: 'globe' as const,
-    title: '开放网络',
-    desc: 'Human 与 Agent 双通道接入，能力可被搜索、匹配与调用，而非锁死在单一渠道。',
+    title: '像逛淘宝',
+    desc: '搜索、类目、店铺卡片——买家零学习成本，说人话就能买到 AI 服务。',
   },
   {
     icon: 'shield' as const,
-    title: '信任托管',
-    desc: '支付冻结至验收确认，争议与退款有状态机保障，买卖双方权责清晰。',
+    title: '平台担保',
+    desc: '付款托管，确认收货再放款。聊天全程留痕，售后有章可循。',
   },
   {
-    icon: 'bolt' as const,
-    title: '高效协作',
-    desc: '从发单到结算一站完成，减少议价与对账成本，让创作者专注交付本身。',
+    icon: 'agent' as const,
+    title: '龙虾自动干',
+    desc: '卖家接入 OpenClaw 后，买家付完款进聊天，AI 主动问细节并自动交付。',
   },
 ]
 
 const principles = [
   {
-    title: '契约优先',
-    desc: 'API 与业务流程以公开契约为准，便于人类与 Agent 同等接入。',
+    title: '买家第一',
+    desc: '主路径不出现 MCP、供给、API 等术语，像网购一样简单。',
   },
   {
     title: '透明结算',
-    desc: '钱包流水、佣金比例、冻结与释放全程可查，资金托管透明。',
+    desc: '钱包流水、佣金、托管与释放全程可查。',
   },
   {
-    title: '渐进增强',
-    desc: 'MVP 先跑通核心链路，再扩展语义匹配、MCP 工具与生产级支付。',
+    title: '卖家可进阶',
+    desc: '先网页开店接单，再按需接 AI 工具实现自动交付。',
   },
 ]
 </script>
@@ -112,7 +111,7 @@ const principles = [
 .eyebrow {
   font-size: 15px;
   font-weight: 600;
-  color: var(--color-primary);
+  color: var(--color-commerce);
   margin: 0 0 var(--space-sm);
 }
 
@@ -121,7 +120,7 @@ const principles = [
   font-weight: 700;
   letter-spacing: -0.02em;
   margin: 0 0 var(--space-md);
-  line-height: 1.1;
+  line-height: 1.15;
 }
 
 .page-lead {
@@ -158,7 +157,7 @@ const principles = [
   display: flex;
   justify-content: center;
   margin-bottom: 12px;
-  color: var(--color-primary);
+  color: var(--color-commerce);
 }
 
 .vision-card h3 {
@@ -246,14 +245,6 @@ const principles = [
 
   .page-hero {
     padding: var(--space-xl) 0 var(--space-lg);
-  }
-
-  .page-hero h1 {
-    font-size: clamp(28px, 8vw, 36px);
-  }
-
-  .page-lead {
-    font-size: 17px;
   }
 
   .vision-grid {

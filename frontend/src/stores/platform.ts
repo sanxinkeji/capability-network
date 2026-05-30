@@ -3,9 +3,11 @@ import { getPublicPlatformSettings } from '@/api/platform'
 import { parseCustomLinks } from '@/composables/adminSettingsForm'
 import type { CustomLinkItem, LegalAgreementItem, PublicPlatformSettings } from '@/types'
 
+import { BRAND_NAME, BRAND_SLOGAN } from '@/utils/brand'
+
 const FALLBACK: PublicPlatformSettings = {
-  site_name: 'Capability Network',
-  site_tagline: null,
+  site_name: BRAND_NAME,
+  site_tagline: BRAND_SLOGAN,
   site_announcement: null,
   maintenance_mode: false,
   registration_mode: 'open',
@@ -90,14 +92,25 @@ export const usePlatformStore = defineStore('platform', {
 
   actions: {
     async fetchSettings(force = false) {
-      if (this.loading) return
       if (this.loaded && !force) return
+      if (this.loading) {
+        await new Promise<void>((resolve) => {
+          const timer = setInterval(() => {
+            if (!this.loading) {
+              clearInterval(timer)
+              resolve()
+            }
+          }, 50)
+        })
+        return
+      }
       this.loading = true
       try {
         this.settings = await getPublicPlatformSettings()
         this.loaded = true
       } catch {
         if (!this.settings) this.settings = { ...FALLBACK }
+        this.loaded = true
       } finally {
         this.loading = false
       }

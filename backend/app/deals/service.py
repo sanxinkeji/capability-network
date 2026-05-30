@@ -28,6 +28,7 @@ from app.deals.constants import (
 )
 from app.deals.models import Deal, DealExtension
 from app.deals.schemas import (
+    DealBuyFromOfferResponse,
     DealConfirmRequest,
     DealCreateRequest,
     DealDeliverRequest,
@@ -343,6 +344,110 @@ async def create_deal(
     return _deal_to_response(deal, extension)
 
 
+async def buy_from_offer(
+    db: AsyncSession,
+    *,
+    current: CurrentUser,
+    offer_id: UUID,
+    buyer_note: str | None = None,
+) -> DealBuyFromOfferResponse:
+    """一键购买：自动创建购物单并下单（跳过匹配页）。"""
+    from app.intents.constants import IntentChannel, IntentSettlement, IntentStatus
+    from app.intents.models import Intent
+    from app.intents.schemas import build_tags_payload
+    from app.offers.constants import OfferStatus
+    from app.offers.models import Offer
+    from app.offers.schemas import parse_tags_payload
+
+    offer = (
+        await db.execute(select(Offer).where(Offer.id == offer_id))
+    ).scalar_one_or_none()
+    if offer is None:
+        raise_auth_error(code=ERR_DEAL_NOT_FOUND, message="offer not found", http_status=404)
+    if offer.status != OfferStatus.PUBLISHED:
+        raise_auth_error(
+            code=ERR_DEAL_CREATE_INVALID,
+            message="offer must be published",
+            http_status=409,
+        )
+    if offer.user_id == current.id:
+        raise_auth_error(
+            code=ERR_DEAL_CREATE_INVALID,
+            message="buyer and seller must be different users",
+            http_status=422,
+        )
+
+    meta = parse_tags_payload(offer.tags)
+    channel_raw = str(meta.get("channel", "human"))
+    intent_channel = (
+        IntentChannel.AGENT if channel_raw == IntentChannel.AGENT else IntentChannel.HUMAN
+    )
+    settlement = (
+        IntentSettlement.POINTS
+        if intent_channel == IntentChannel.AGENT
+        else IntentSettlement.FIAT
+    )
+
+    description = offer.description
+    if buyer_note and buyer_note.strip():
+        description = f"{description}\n\n买家备注：{buyer_note.strip()}"
+
+    intent = Intent(
+        user_id=current.id,
+        title=f"购买：{offer.title}",
+        description=description,
+        category=offer.category,
+        budget_cents=offer.price_cents,
+        currency=offer.currency,
+        status=IntentStatus.OPEN,
+        tags=build_tags_payload(
+            channel=intent_channel,
+            settlement=settlement,
+            deadline=None,
+            acceptance_criteria={"source": "buy_from_offer", "offer_id": str(offer.id)},
+        ),
+    )
+    db.add(intent)
+    await db.flush()
+
+    channel = str(intent_channel)
+    auto_confirm = _resolve_auto_confirm(channel=channel, amount_cents=offer.price_cents)
+
+    deal = Deal(
+        offer_id=offer.id,
+        intent_id=intent.id,
+        buyer_id=current.id,
+        seller_id=offer.user_id,
+        amount_cents=offer.price_cents,
+        currency=offer.currency,
+        status=DealStatus.PENDING,
+    )
+    db.add(deal)
+    await db.flush()
+
+    extension = DealExtension(
+        deal_id=deal.id,
+        match_log_id=None,
+        auto_confirm=auto_confirm,
+    )
+    db.add(extension)
+    intent.status = IntentStatus.MATCHED
+
+    await db.commit()
+    await db.refresh(deal)
+    await db.refresh(extension)
+
+    await _emit_status_changed(deal, from_status=DealStatus.PENDING, to_status=deal.status)
+    logger.info("buy_from_offer: deal_id=%s offer_id=%s intent_id=%s", deal.id, offer.id, intent.id)
+
+    deal_response = _deal_to_response(deal, extension)
+    return DealBuyFromOfferResponse(
+        deal=deal_response,
+        intent_id=intent.id,
+        offer_id=offer.id,
+    )
+
+
 async def _apply_delivery(
     db: AsyncSession,
     deal: Deal,
@@ -366,6 +471,15 @@ async def _apply_delivery(
     else:
         deadline = deal_tasks.schedule_auto_confirm(deal.id, delay_hours=AUTO_CONFIRM_DELAY_HOURS)
         ext.auto_confirm_deadline = deadline
+
+    from app.deals.messages import notify_delivery_in_chat
+
+    await notify_delivery_in_chat(
+        db,
+        deal=deal,
+        delivery_text=text or "",
+        payload_url=payload_url,
+    )
 
     return ext
 
@@ -433,6 +547,10 @@ async def pay_deal(
     deal.status = DealStatus.PAID
     assert_transition(deal.status, DealStatus.IN_PROGRESS)
     deal.status = DealStatus.IN_PROGRESS
+
+    from app.deals.messages import bootstrap_chat_on_pay
+
+    await bootstrap_chat_on_pay(db, deal=deal)
 
     await db.commit()
     await db.refresh(deal)

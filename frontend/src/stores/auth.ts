@@ -11,6 +11,10 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isLoggedIn = computed(() => !!token.value)
   const isAdmin = computed(() => user.value?.role === 'admin')
+  const isSeller = computed(
+    () => user.value?.is_seller === true || user.value?.role === 'seller' || user.value?.role === 'admin',
+  )
+  const shopStatus = computed(() => user.value?.shop_status ?? 'none')
 
   function setTokens(access: string, refresh: string) {
     token.value = access
@@ -70,6 +74,8 @@ export const useAuthStore = defineStore('auth', () => {
     loading,
     isLoggedIn,
     isAdmin,
+    isSeller,
+    shopStatus,
     login,
     register,
     logout,

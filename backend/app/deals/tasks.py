@@ -68,7 +68,12 @@ def get_scheduled_deadline(deal_id: UUID) -> datetime | None:
 def shutdown_scheduler() -> None:
     global _scheduler
     if _scheduler is not None:
-        _scheduler.shutdown(wait=False)
+        try:
+            _scheduler.shutdown(wait=False)
+        except Exception:
+            # 调度器可能绑定在已关闭的事件循环上（测试/重启场景），
+            # 关闭失败不应向上抛出；置空后下次会在当前循环重建。
+            logger.warning("scheduler shutdown failed", exc_info=True)
         _scheduler = None
 
 

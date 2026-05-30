@@ -72,6 +72,7 @@ const router = useRouter()
 const route = useRoute()
 const pendingWithdrawals = ref(0)
 const pendingKyc = ref(0)
+const pendingShopApplications = ref(0)
 const disputedDeals = ref(0)
 
 type NavItem = { to: string; label: string; icon: IconName; title: string; badge?: number }
@@ -91,6 +92,13 @@ const navSections = computed(() => {
           icon: 'lock',
           title: '实名审核',
           badge: pendingKyc.value || undefined,
+        },
+        {
+          to: '/admin/shop-applications',
+          label: '入驻审核',
+          icon: 'package',
+          title: '入驻审核',
+          badge: pendingShopApplications.value || undefined,
         },
         { to: '/admin/agent-keys', label: 'Agent 接入管理', icon: 'agent', title: 'Agent 接入管理' },
       ],
@@ -157,6 +165,7 @@ async function loadBadges() {
     const stats = await getAdminStats()
     pendingWithdrawals.value = stats.withdrawals_pending ?? 0
     pendingKyc.value = stats.kyc_pending ?? 0
+    pendingShopApplications.value = stats.shop_applications_pending ?? 0
     disputedDeals.value = stats.deals_disputed ?? 0
   } catch {
     /* ignore */

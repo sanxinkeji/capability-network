@@ -2,8 +2,7 @@
   <article class="manage-card glass-card" :class="{ 'manage-card--muted': muted }">
     <div class="manage-card__cover" :class="`manage-card__cover--${offer.category}`">
       <AppIcon :name="coverIcon(offer)" size="lg" class="cover-icon" />
-      <span v-if="offer.channel === 'agent'" class="cover-badge cover-badge--agent">智能体</span>
-      <span v-else class="cover-badge cover-badge--human">人工</span>
+      <span class="cover-badge cover-badge--agent">{{ offer.channel === 'agent' ? 'AI 龙虾' : '待接 AI' }}</span>
     </div>
     <div class="manage-card__body">
       <h3 class="manage-card__title">{{ offer.title }}</h3>

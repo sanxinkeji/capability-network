@@ -1,20 +1,15 @@
 <template>
 
   <div class="app-page">
-
-    <div class="commerce-page-head">
-
-      <div>
-
-        <h1>我的供给</h1>
-
-        <p class="commerce-page-head__sub">卖方在这里上架能力，等待买方匹配选用</p>
-
-      </div>
-
-      <RouterLink to="/app/offers/new" class="btn btn-commerce btn-sm">发布供给</RouterLink>
-
-    </div>
+    <ShopPageHeader
+      title="我的店铺"
+      subtitle="上架 AI 技能，接入 OpenClaw 自动接单交付"
+    >
+      <template #actions>
+        <RouterLink to="/app/offers/new" class="btn btn-commerce btn-sm">上架服务</RouterLink>
+      </template>
+    </ShopPageHeader>
+    <ShopTrustStrip />
 
 
 
@@ -93,6 +88,7 @@ import { SELLER_FLOW_HINT } from '@/utils/platformGuide'
 import CommerceTabs from '@/components/CommerceTabs.vue'
 
 import HelpTip from '@/components/HelpTip.vue'
+import ShopPageHeader from '@/components/ShopPageHeader.vue'
 
 import ManageOfferCard from '@/components/ManageOfferCard.vue'
 

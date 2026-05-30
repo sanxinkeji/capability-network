@@ -1,36 +1,36 @@
 <template>
-  <article class="product-card glass-card">
-    <div class="card-cover" :class="`card-cover--${offer.category}`">
-      <AppIcon :name="coverIcon(offer)" size="lg" class="cover-icon" />
-      <span v-if="offer.channel === 'agent'" class="cover-badge cover-badge--agent">智能体</span>
-      <span v-else class="cover-badge cover-badge--human">人工</span>
-      <span v-if="offer.channel === 'agent'" class="cover-tag tag-promo">自动交付</span>
-    </div>
-
-    <div class="card-body">
-      <h3 class="card-title">{{ offer.title }}</h3>
-      <p v-if="offer.description" class="card-desc">{{ offer.description }}</p>
-
-      <div class="card-tags">
-        <span class="mini-tag">{{ categoryLabel(offer.category) }}</span>
-        <span class="mini-tag mini-tag--muted">{{ billingLabel(offer.billing_model) }}</span>
-        <span class="tag-trust">托管支付</span>
+  <RouterLink :to="ctaTo" class="product-card-link">
+    <article class="product-card glass-card" :class="{ 'product-card--feed': feed }">
+      <div class="card-cover" :class="`card-cover--${offer.category}`">
+        <AppIcon :name="coverIcon(offer)" size="lg" class="cover-icon" />
+        <span class="cover-badge cover-badge--agent">AI 店</span>
+        <span v-if="!feed" class="cover-tag tag-promo">付款进聊天</span>
       </div>
 
-      <div class="card-footer">
-        <div class="price-commerce card-price">
-          <span class="price-symbol">¥</span>
-          <span class="price-int">{{ priceParts(offer.price_cents).int }}</span>
-          <span class="price-dec">{{ priceParts(offer.price_cents).dec }}</span>
-          <span v-if="offer.channel === 'agent'" class="price-unit">/ 次起</span>
+      <div class="card-body">
+        <h3 class="card-title">{{ offer.title }}</h3>
+        <p v-if="offer.description && !feed" class="card-desc">{{ offer.description }}</p>
+
+        <div v-if="!feed" class="card-tags">
+          <span class="mini-tag">{{ categoryLabel(offer.category) }}</span>
+          <span class="mini-tag mini-tag--muted">{{ billingLabel(offer.billing_model) }}</span>
+          <span class="tag-trust">托管支付</span>
         </div>
-        <RouterLink :to="ctaTo" class="btn btn-sm btn-commerce buy-btn">
-          立即选用
-        </RouterLink>
+
+        <div class="card-footer">
+          <div class="price-commerce card-price">
+            <span class="price-symbol">¥</span>
+            <span class="price-int">{{ priceParts(offer.price_cents).int }}</span>
+            <span class="price-dec">{{ priceParts(offer.price_cents).dec }}</span>
+            <span v-if="feed" class="price-unit">/{{ billingLabel(offer.billing_model) }}</span>
+            <span v-else class="price-unit">/ 次起</span>
+          </div>
+          <span v-if="!feed" class="btn btn-sm btn-commerce buy-btn">立即购买</span>
+        </div>
+        <p v-if="!feed" class="card-flow-hint">进入详情确认后付款，付完款自动进聊天</p>
       </div>
-      <p class="card-flow-hint">选用后创建需求并匹配，确认后才扣款</p>
-    </div>
-  </article>
+    </article>
+  </RouterLink>
 </template>
 
 <script setup lang="ts">
@@ -44,12 +44,12 @@ import { categoryLabel } from '@/utils'
 const props = defineProps<{
   offer: Offer
   ctaTo?: string
+  feed?: boolean
 }>()
 
 const ctaTo = computed(() => {
   if (props.ctaTo) return props.ctaTo
-  const hint = encodeURIComponent(props.offer.title)
-  return `/app/intents/new?mode=ai&hint=${hint}`
+  return `/app/market/${props.offer.id}`
 })
 
 function coverIcon(offer: Offer): IconName {
@@ -58,10 +58,11 @@ function coverIcon(offer: Offer): IconName {
     data: 'chart',
     dev: 'agent',
     content: 'clipboard',
+    writing: 'clipboard',
     consulting: 'person',
     ai: 'agent',
   }
-  return map[offer.category] ?? (offer.channel === 'agent' ? 'agent' : 'package')
+  return map[offer.category] ?? 'agent'
 }
 
 function billingLabel(model: BillingModel): string {
@@ -80,6 +81,13 @@ function priceParts(cents: number): { int: string; dec: string } {
 </script>
 
 <style scoped>
+.product-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  min-width: 0;
+}
+
 .product-card {
   padding: 0 !important;
   overflow: hidden;
@@ -141,12 +149,7 @@ function priceParts(cents: number): { int: string; dec: string } {
 }
 
 .cover-badge--agent {
-  background: rgba(52, 199, 89, 0.9);
-  color: #fff;
-}
-
-.cover-badge--human {
-  background: rgba(0, 122, 255, 0.9);
+  background: rgba(238, 10, 36, 0.92);
   color: #fff;
 }
 

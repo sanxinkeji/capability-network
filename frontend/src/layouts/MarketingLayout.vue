@@ -7,21 +7,21 @@
         <span class="brand-text">{{ platform.siteName }}</span>
       </RouterLink>
       <nav class="nav-links">
-        <RouterLink to="/#features">产品</RouterLink>
-        <RouterLink to="/login?redirect=/app/market">逛市场</RouterLink>
-        <RouterLink to="/#how">如何工作</RouterLink>
-        <RouterLink to="/#scenarios">场景</RouterLink>
-        <RouterLink to="/pricing">定价</RouterLink>
+        <RouterLink to="/#features">亮点</RouterLink>
+        <RouterLink to="/login?redirect=/app/market">首页</RouterLink>
+        <RouterLink to="/#how">怎么买</RouterLink>
+        <RouterLink to="/#scenarios">AI 店家</RouterLink>
+        <RouterLink to="/pricing">费用</RouterLink>
         <RouterLink to="/about">关于</RouterLink>
-        <RouterLink to="/connect">连接 Agent</RouterLink>
+        <RouterLink to="/connect">卖家入驻</RouterLink>
       </nav>
       <div class="nav-actions">
         <template v-if="isLoggedIn">
-          <RouterLink to="/app" class="btn btn-sm">进入控制台</RouterLink>
+          <RouterLink to="/app/market" class="btn btn-sm btn-commerce">进入集市</RouterLink>
         </template>
         <template v-else>
-          <RouterLink to="/login" class="btn btn-ghost btn-sm">登录</RouterLink>
-          <RouterLink to="/register" class="btn btn-sm">免费注册</RouterLink>
+          <RouterLink to="/login" class="btn btn-ghost btn-sm nav-login">登录</RouterLink>
+          <RouterLink to="/register" class="btn btn-sm btn-commerce">免费注册</RouterLink>
         </template>
       </div>
       <button
@@ -54,8 +54,8 @@
         </div>
         <div class="footer-links">
           <RouterLink to="/">首页</RouterLink>
-          <RouterLink to="/login?redirect=/app/market">逛市场</RouterLink>
-          <RouterLink to="/#features">产品</RouterLink>
+          <RouterLink to="/login?redirect=/app/market">逛集市</RouterLink>
+          <RouterLink to="/#features">亮点</RouterLink>
           <RouterLink to="/pricing">定价</RouterLink>
           <RouterLink to="/about">关于我们</RouterLink>
           <RouterLink :to="platform.docsUrl">API 文档</RouterLink>
@@ -80,9 +80,11 @@ import { usePlatformStore } from '@/stores/platform'
 import MobileNav from '@/components/MobileNav.vue'
 import AppIcon from '@/components/AppIcon.vue'
 
+import { BRAND_FOOTER } from '@/utils/brand'
+
 const year = new Date().getFullYear()
 const platform = usePlatformStore()
-const defaultFooter = 'AI 能力网络 — 连接供给与需求，安全托管每一笔交易。'
+const defaultFooter = BRAND_FOOTER
 const isLoggedIn = computed(() => !!localStorage.getItem(TOKEN_KEY))
 const menuOpen = ref(false)
 const route = useRoute()
@@ -113,31 +115,41 @@ onUnmounted(() => {
 
 .site-nav {
   position: sticky;
-  top: 12px;
+  top: 0;
   z-index: 100;
-  margin: 12px auto 0;
-  width: calc(100% - 32px);
-  max-width: var(--content-max);
-  padding: 10px 20px !important;
+  margin: 0;
+  width: 100%;
+  max-width: none;
+  padding: 0 !important;
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  border-radius: var(--radius-pill) !important;
+  border-radius: 0 !important;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+@media (min-width: 769px) {
+  .site-nav {
+    padding: 0 max(24px, calc((100% - var(--shop-content-max)) / 2)) !important;
+    min-height: 56px;
+  }
 }
 
 .brand {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-weight: 700;
-  font-size: 17px;
-  color: var(--color-label);
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--color-commerce);
   text-decoration: none;
   flex-shrink: 0;
 }
 
 .brand-icon {
-  color: var(--color-primary);
+  color: var(--color-commerce);
   font-size: 14px;
 }
 
@@ -157,7 +169,11 @@ onUnmounted(() => {
 
 .nav-links a:hover,
 .nav-links a.router-link-active {
-  color: var(--color-primary);
+  color: var(--color-commerce);
+}
+
+.nav-login {
+  color: var(--color-label-secondary) !important;
 }
 
 .nav-actions {
@@ -204,7 +220,7 @@ main {
 }
 
 .footer-inner {
-  max-width: var(--content-max);
+  max-width: var(--shop-content-max);
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
@@ -243,10 +259,13 @@ main {
 
 @media (max-width: 768px) {
   .site-nav {
-    border-radius: var(--radius-card) !important;
-    padding: 8px 12px !important;
     top: max(8px, env(safe-area-inset-top));
+    margin: 12px auto 0;
     width: calc(100% - 24px);
+    max-width: var(--content-max);
+    padding: 8px 12px !important;
+    border-radius: var(--radius-card) !important;
+    border: 1px solid rgba(0, 0, 0, 0.06);
   }
 
   .brand-text {

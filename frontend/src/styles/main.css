@@ -1,5 +1,8 @@
 @import './tokens.css';
 @import './admin.css';
+@import './commerce-ui.css';
+@import './ios26-shop.css';
+@import './taobao-ui.css';
 
 * {
   box-sizing: border-box;
@@ -139,6 +142,18 @@ textarea {
 .btn-commerce:hover:not(:disabled) {
   background: var(--gradient-commerce);
   opacity: 0.92;
+}
+
+.btn-outline-commerce {
+  background: #fff;
+  border: 2px solid var(--color-commerce);
+  color: var(--color-commerce);
+  font-weight: 600;
+}
+
+.btn-outline-commerce:hover:not(:disabled) {
+  background: var(--color-commerce-muted);
+  color: var(--color-commerce);
 }
 
 .tag-promo {
@@ -1091,32 +1106,8 @@ tr:last-child td {
 }
 
 @media (min-width: 769px) {
-  .layout {
-    display: grid;
-    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
-    align-items: stretch;
-  }
-
-  .sidebar {
-    display: flex;
-    flex-direction: column;
-    position: sticky;
-    top: 0;
-    align-self: start;
-    height: 100vh;
-    height: 100dvh;
-    width: var(--sidebar-width);
-    margin: var(--space-md) 0 var(--space-md) var(--space-md);
-    padding: var(--space-md) !important;
-    overflow-y: auto;
-  }
-
   .mobile-header {
     display: none;
-  }
-
-  .main {
-    padding: var(--space-md) var(--space-lg) var(--space-xl);
   }
 }
 

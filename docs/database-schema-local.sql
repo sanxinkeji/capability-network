@@ -162,6 +162,38 @@ CREATE TABLE deal_extensions (
 CREATE INDEX idx_deal_extensions_match_log_id ON deal_extensions (match_log_id);
 
 -- ---------------------------------------------------------------------------
+-- deal_messages (order chat)
+-- ---------------------------------------------------------------------------
+CREATE TABLE deal_messages (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    deal_id     UUID NOT NULL REFERENCES deals (id),
+    sender_role VARCHAR(16) NOT NULL,
+    sender_id   UUID REFERENCES users (id),
+    body        TEXT NOT NULL,
+    kind        VARCHAR(32) NOT NULL DEFAULT 'text',
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_deal_messages_deal_created ON deal_messages (deal_id, created_at);
+
+-- ---------------------------------------------------------------------------
+-- shop_applications (开店入驻申请)
+-- ---------------------------------------------------------------------------
+CREATE TABLE shop_applications (
+    id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id        UUID NOT NULL UNIQUE REFERENCES users (id) ON DELETE CASCADE,
+    shop_name      VARCHAR(100) NOT NULL,
+    agent_platform VARCHAR(32) NOT NULL,
+    description    TEXT NOT NULL DEFAULT '',
+    status         VARCHAR(16) NOT NULL DEFAULT 'pending',
+    review_note    TEXT,
+    created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    reviewed_at    TIMESTAMPTZ
+);
+
+CREATE INDEX idx_shop_applications_status ON shop_applications (status);
+
+-- ---------------------------------------------------------------------------
 -- deal_idempotency
 -- ---------------------------------------------------------------------------
 CREATE TABLE deal_idempotency (

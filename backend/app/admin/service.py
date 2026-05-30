@@ -35,6 +35,7 @@ from app.platform.announcements import PlatformAnnouncement
 from app.platform.schemas import PaymentConfigInfo
 from app.platform.service import get_payment_config_info, log_admin_action
 from app.core.health import probe_database, probe_redis
+from app.shop.models import ShopApplication
 from app.wallets.constants import LedgerEntryType, WithdrawStatus
 from app.wallets.models import PaymentOrder, Wallet, WalletLedger, WithdrawRequest
 
@@ -143,6 +144,12 @@ async def get_platform_stats(db: AsyncSession) -> AdminStatsResponse:
         )
     ).scalar_one()
 
+    shop_applications_pending = (
+        await db.execute(
+            select(func.count()).select_from(ShopApplication).where(ShopApplication.status == "pending")
+        )
+    ).scalar_one()
+
     agent_keys_active = (
         await db.execute(
             select(func.count()).select_from(ApiKey).where(ApiKey.status == ApiKeyStatus.ACTIVE)
@@ -166,6 +173,7 @@ async def get_platform_stats(db: AsyncSession) -> AdminStatsResponse:
         wallet_commission_cents=int(commission or 0),
         withdrawals_pending=int(withdrawals_pending or 0),
         kyc_pending=int(kyc_pending or 0),
+        shop_applications_pending=int(shop_applications_pending or 0),
         agent_keys_active=int(agent_keys_active or 0),
         agent_users_total=int(agent_users_total or 0),
     )

@@ -22,6 +22,19 @@ DEFAULT_PAGE_SIZE = 20
 MAX_PAGE_SIZE = 100
 
 WEBHOOK_EVENT_STATUS_CHANGED = "deals.status_changed"
+WEBHOOK_EVENT_MESSAGE_CREATED = "deals.message_created"
+
+class DealMessageSenderRole(StrEnum):
+    SYSTEM = "system"
+    BUYER = "buyer"
+    SELLER = "seller"
+    AGENT = "agent"
+
+
+class DealMessageKind(StrEnum):
+    TEXT = "text"
+    DELIVERY = "delivery"
+    STATUS = "status"
 
 # deals 模块错误码（45000–45999）
 ERR_DEAL_NOT_FOUND = 45001
@@ -36,3 +49,6 @@ ERR_DEAL_CREATE_INVALID = 45009
 ERR_DEAL_WEBHOOK_NOT_FOUND = 45010
 ERR_DEAL_NOT_PENDING = 45011
 ERR_DEAL_REFUND_FORBIDDEN = 45012
+ERR_DEAL_MESSAGE_FORBIDDEN = 45013
+ERR_DEAL_MESSAGE_EMPTY = 45014
+ERR_DEAL_MESSAGE_CLOSED = 45015

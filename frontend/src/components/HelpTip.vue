@@ -22,16 +22,19 @@ withDefaults(
 .help-tip {
   display: flex;
   gap: 10px;
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
   margin-bottom: 12px;
   font-size: 13px;
   line-height: 1.45;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .help-tip--info {
-  background: rgba(22, 119, 255, 0.08);
-  border: 1px solid rgba(22, 119, 255, 0.15);
+  background: rgba(0, 122, 255, 0.1);
+  border: 1px solid rgba(0, 122, 255, 0.18);
+  box-shadow: var(--shadow-inner);
 }
 
 .help-tip--warn {

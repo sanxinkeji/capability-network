@@ -6,6 +6,10 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
+from sqlalchemy import select
+
+from app.auth.constants import UserRole
+from app.auth.models import User
 from app.core.database import Base, get_db
 from app.deals.tasks import clear_scheduled_tasks
 from app.deals.webhooks import clear_registry
@@ -38,6 +42,7 @@ async def client():
     fastapi_app.dependency_overrides[get_db] = override_get_db
     transport = ASGITransport(app=fastapi_app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        ac.session_factory = session_factory
         yield ac
     fastapi_app.dependency_overrides.clear()
     clear_scheduled_tasks()
@@ -46,6 +51,14 @@ async def client():
 
 def _auth(token: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {token}"}
+
+
+async def _promote_seller(session_factory, *, suffix: str) -> None:
+    email = f"user-{suffix}@example.com"
+    async with session_factory() as db:
+        user = (await db.execute(select(User).where(User.email == email))).scalar_one()
+        user.role = UserRole.SELLER
+        await db.commit()
 
 
 async def _register(client: AsyncClient, *, suffix: str) -> str:
@@ -68,6 +81,7 @@ async def _register(client: AsyncClient, *, suffix: str) -> str:
 async def test_full_flow_register_match_deal_complete(client: AsyncClient):
     seller_token = await _register(client, suffix="seller")
     buyer_token = await _register(client, suffix="buyer")
+    await _promote_seller(client.session_factory, suffix="seller")
 
     # 卖方创建并发布供给
     offer_resp = await client.post(

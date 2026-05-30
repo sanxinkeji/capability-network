@@ -3,6 +3,7 @@ import type {
   Intent,
   IntentCreatePayload,
   IntentParseResult,
+  MarketplaceOffer,
   MatchRunResult,
   Offer,
   OfferChannel,
@@ -65,6 +66,10 @@ export function listMarketplaceOffers(params?: {
   page_size?: number
 }): Promise<PaginatedData<Offer>> {
   return request<PaginatedData<Offer>>({ method: 'GET', url: '/offers/marketplace', params })
+}
+
+export function getMarketplaceOffer(offerId: string): Promise<MarketplaceOffer> {
+  return request<MarketplaceOffer>({ method: 'GET', url: `/offers/marketplace/${offerId}` })
 }
 
 export function getIntent(intentId: string): Promise<Intent> {

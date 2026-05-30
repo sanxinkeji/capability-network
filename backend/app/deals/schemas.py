@@ -20,6 +20,11 @@ class DealCreateRequest(BaseModel):
         return self
 
 
+class DealBuyFromOfferRequest(BaseModel):
+    offer_id: UUID
+    buyer_note: str | None = Field(default=None, max_length=2000)
+
+
 class DealDeliverRequest(BaseModel):
     payload_url: str | None = Field(default=None, max_length=512)
     text: str | None = None
@@ -66,6 +71,12 @@ class DealResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class DealBuyFromOfferResponse(BaseModel):
+    deal: DealResponse
+    intent_id: UUID
+    offer_id: UUID
+
+
 class WebhookRegisterRequest(BaseModel):
     url: str = Field(min_length=8, max_length=512)
     events: list[str] = Field(default_factory=lambda: ["deals.status_changed"])
@@ -77,3 +88,24 @@ class WebhookRegistrationResponse(BaseModel):
     url: str
     events: list[str]
     created_at: str
+
+
+class DealMessageCreateRequest(BaseModel):
+    body: str = Field(min_length=1, max_length=8000)
+
+
+class DealMessageResponse(BaseModel):
+    id: UUID
+    deal_id: UUID
+    sender_role: str
+    sender_id: UUID | None = None
+    body: str
+    kind: str
+    created_at: str
+
+    model_config = {"from_attributes": True}
+
+
+class DealMessageListResponse(BaseModel):
+    items: list[DealMessageResponse]
+    total: int

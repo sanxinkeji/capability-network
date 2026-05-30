@@ -11,7 +11,7 @@
           <div class="mobile-nav-header">
             <RouterLink to="/" class="mobile-nav-brand" @click="close">
               <AppIcon name="logo" size="md" filled class="brand-icon" />
-              Capability Network
+              {{ platform.siteName }}
             </RouterLink>
             <button
               type="button"
@@ -24,19 +24,19 @@
           </div>
 
           <nav class="mobile-nav-links">
-            <RouterLink to="/#features" @click="close">产品</RouterLink>
-            <RouterLink to="/login?redirect=/app/market" @click="close">逛市场</RouterLink>
-            <RouterLink to="/#how" @click="close">如何工作</RouterLink>
-            <RouterLink to="/#scenarios" @click="close">场景</RouterLink>
-            <RouterLink to="/pricing" @click="close">定价</RouterLink>
+            <RouterLink to="/#features" @click="close">亮点</RouterLink>
+            <RouterLink to="/login?redirect=/app/market" @click="close">首页</RouterLink>
+            <RouterLink to="/#how" @click="close">怎么买</RouterLink>
+            <RouterLink to="/#scenarios" @click="close">AI 店家</RouterLink>
+            <RouterLink to="/pricing" @click="close">费用</RouterLink>
           <RouterLink to="/about" @click="close">关于</RouterLink>
-          <RouterLink to="/connect" @click="close">连接 Agent</RouterLink>
+          <RouterLink to="/connect" @click="close">卖家入驻</RouterLink>
           <RouterLink to="/docs" @click="close">API 文档</RouterLink>
           </nav>
 
           <div class="mobile-nav-actions">
             <template v-if="isLoggedIn">
-              <RouterLink to="/app" class="btn" @click="close">进入控制台</RouterLink>
+              <RouterLink to="/app" class="btn" @click="close">进入集市</RouterLink>
             </template>
             <template v-else>
               <RouterLink to="/login" class="btn btn-secondary" @click="close">登录</RouterLink>
@@ -52,6 +52,9 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import AppIcon from '@/components/AppIcon.vue'
+import { usePlatformStore } from '@/stores/platform'
+
+const platform = usePlatformStore()
 
 defineProps<{
   open: boolean

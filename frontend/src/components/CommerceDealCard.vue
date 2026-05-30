@@ -14,7 +14,7 @@
 
         </div>
 
-        <span class="order-card__status" :class="statusClass">{{ statusLabel(deal.status) }}</span>
+        <span class="order-card__status" :class="statusClass">{{ displayStatus }}</span>
 
       </div>
 
@@ -101,17 +101,11 @@ import type { Deal } from '@/types'
 import type { DealViewerRole } from '@/utils'
 
 import {
-
+  buyerDealStatusLabel,
   dealListActionLabel,
-
   dealOrderTitle,
-
   dealShortId,
-
   formatDate,
-
-  statusLabel,
-
 } from '@/utils'
 
 
@@ -139,14 +133,13 @@ const priceParts = computed(() => {
 
 
 const shopLabel = computed(() => {
-
-  const id = props.viewerRole === 'seller' ? props.deal.buyer_id : props.deal.seller_id
-
-  return props.viewerRole === 'seller' ? `买家 ${dealShortId(id)}` : `卖家 ${dealShortId(id)}`
-
+  if (props.viewerRole === 'seller') {
+    return `买家 ${dealShortId(props.deal.buyer_id)}`
+  }
+  return `AI 店家 ${dealShortId(props.deal.seller_id)}`
 })
 
-
+const displayStatus = computed(() => buyerDealStatusLabel(props.deal.status))
 
 const primaryAction = computed(() =>
 

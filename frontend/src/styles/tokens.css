@@ -53,7 +53,8 @@
 
   --nav-height: 52px;
   --sidebar-width: 240px;
-  --content-max: 1120px;
+  --content-max: 1190px;
+  --shop-content-max: 1190px;
   --tab-bar-height: 49px;
   --touch-target-min: 44px;
 }

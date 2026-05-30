@@ -11,6 +11,7 @@ from app.offers.constants import OfferChannel, OfferStatus
 from app.offers.schemas import OfferCreateRequest, OfferUpdateRequest
 from app.offers.service import (
     create_offer,
+    get_marketplace_offer,
     get_offer,
     list_marketplace_offers,
     list_offers,
@@ -75,6 +76,18 @@ async def list_marketplace_endpoint(
         page=page,
         page_size=page_size,
     )
+    return success(data)
+
+
+@router.get("/marketplace/{offer_id}")
+async def get_marketplace_offer_endpoint(
+    offer_id: UUID,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current: Annotated[CurrentUser, Depends(get_current_user)],
+):
+    settings = await get_or_create_settings(db)
+    require_marketplace_enabled(settings)
+    data = await get_marketplace_offer(db, offer_id=offer_id, current=current)
     return success(data)
 
 

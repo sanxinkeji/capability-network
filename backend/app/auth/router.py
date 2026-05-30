@@ -127,6 +127,12 @@ async def get_me(
         raise_auth_error(code=40401, message="user not found", http_status=404)
     profile = user_to_profile(user)
     data = profile.model_dump()
+    from app.shop.service import get_shop_status
+
+    shop = await get_shop_status(db, user)
+    data["is_seller"] = shop.is_seller
+    data["shop_status"] = shop.application.status if shop.application else "none"
+    data["shop_name"] = shop.application.shop_name if shop.application else None
     data["caller_type"] = current.caller_type
     if current.platform_user_id:
         data["platform_user_id"] = current.platform_user_id

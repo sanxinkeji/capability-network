@@ -363,6 +363,47 @@ async function main() {
   );
 
   server.registerTool(
+    "list_deal_messages",
+    {
+      title: "订单聊天消息",
+      description:
+        "列出指定订单的会话消息（支付后聊天）。当前用户须为买方或卖方。按时间升序返回。",
+      inputSchema: z.object({
+        deal_id: z.string().uuid().describe("Deal UUID"),
+      }),
+    },
+    async ({ deal_id }) => {
+      try {
+        const data = await backend.listDealMessages(deal_id);
+        return jsonResult(data);
+      } catch (error) {
+        return textResult(formatBackendError(error), true);
+      }
+    },
+  );
+
+  server.registerTool(
+    "post_deal_message",
+    {
+      title: "发送订单聊天消息",
+      description:
+        "在订单会话中发送消息。买方/卖方可沟通需求；卖方 API Key（OpenClaw）以 agent 身份发言。",
+      inputSchema: z.object({
+        deal_id: z.string().uuid().describe("Deal UUID"),
+        body: z.string().min(1).max(8000).describe("消息正文"),
+      }),
+    },
+    async ({ deal_id, body }) => {
+      try {
+        const data = await backend.postDealMessage(deal_id, { body });
+        return jsonResult(data);
+      } catch (error) {
+        return textResult(formatBackendError(error), true);
+      }
+    },
+  );
+
+  server.registerTool(
     "create_offer",
     {
       title: "创建能力供给",

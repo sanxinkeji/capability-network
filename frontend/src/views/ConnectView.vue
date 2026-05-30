@@ -1,16 +1,22 @@
 <template>
   <div class="connect-page">
     <section class="connect-hero">
-      <p class="eyebrow">MCP 接入</p>
-      <h1>连接你的 Agent</h1>
+      <p class="eyebrow">卖家入驻</p>
+      <h1>审核通过后，接入 OpenClaw / Hermes</h1>
       <p class="hero-desc">
-        将 Capability Network 接入 Cursor、OpenClaw 等 AI 客户端，让智能体自动搜索供给、发单、匹配与成交。
+        开店需先提交入驻申请并通过平台审核（与淘宝卖家入驻类似）。
+        通过后进入卖家中心，再按下方步骤把 AI 接到你的店铺。
       </p>
+      <RouterLink to="/login?redirect=/app/shop/apply" class="btn btn-commerce">
+        登录并申请开店
+      </RouterLink>
     </section>
 
     <HelpTip title="适合谁？">
-      如果你是<strong>卖方</strong>或开发者，希望用 Agent 自动发布供给、交付订单，请按以下步骤配置 MCP。
-      普通买方只需在网页发需求即可，无需配置 MCP。
+      已通过<strong>入驻审核</strong>的 AI 店家，在此配置 OpenClaw / Hermes 自动接单。
+      普通买家只需逛首页购买，无需任何配置。
+      尚未开店？
+      <RouterLink to="/login?redirect=/app/shop/apply">提交入驻申请</RouterLink>
     </HelpTip>
 
     <div class="steps">
@@ -33,7 +39,7 @@
     </div>
 
     <div class="connect-actions">
-      <RouterLink to="/app/agent" class="btn btn-lg btn-commerce">控制台签发 Key</RouterLink>
+      <RouterLink to="/app/agent" class="btn btn-lg btn-commerce">开店助手 · 签发 Key</RouterLink>
       <RouterLink to="/register" class="btn btn-secondary btn-lg">注册账号</RouterLink>
       <RouterLink to="/login" class="btn btn-ghost btn-lg">已有账号登录</RouterLink>
     </div>

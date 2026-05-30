@@ -19,6 +19,7 @@ class AdminStatsResponse(BaseModel):
     wallet_commission_cents: int = 0
     withdrawals_pending: int = 0
     kyc_pending: int = 0
+    shop_applications_pending: int = 0
     agent_keys_active: int = 0
     agent_users_total: int = 0
 

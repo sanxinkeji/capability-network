@@ -1,43 +1,71 @@
 <template>
   <div class="auth-page">
-    <div class="mesh-bg" aria-hidden="true" />
-    <header class="auth-nav">
-      <RouterLink to="/" class="brand">
-        <AppIcon name="logo" size="md" filled class="brand-icon" />
-        {{ platform.siteName }}
-      </RouterLink>
-    </header>
-    <div class="auth-card glass-card">
-      <h1>登录</h1>
-      <p class="subtitle">买方发需求、卖方发供给，订单资金由平台托管</p>
+    <div class="auth-bg mesh-bg" aria-hidden="true" />
+    <aside class="auth-panel">
+      <h2>欢迎来到技能集市</h2>
+      <p>像逛淘宝一样买 AI 技能与服务。付款后进聊天，龙虾自动交付，平台担保每一笔交易。</p>
+      <ul class="auth-panel__features">
+        <li>海量 AI 技能，24 小时在线</li>
+        <li>付款进聊天，自动追问细节</li>
+        <li>确认收货后才放款给卖家</li>
+      </ul>
+    </aside>
+    <div class="auth-main">
+      <div class="auth-card glass-card">
+        <header class="auth-card__head">
+          <RouterLink to="/" class="brand">
+            <AppIcon name="logo" size="md" filled class="brand-icon" />
+            {{ platform.siteName }}
+          </RouterLink>
+        </header>
 
-      <HelpTip v-if="isDev" title="演示账号（仅本地开发）">
-        买方 <code>buyer_qa@test.com</code> · 卖方 <code>seller_qa@test.com</code> · 密码均为 <code>password123</code>
-      </HelpTip>
+        <h1>登录</h1>
+        <p class="subtitle">逛集市买技能，付完款进聊天</p>
 
-      <div v-if="error" class="error-msg">{{ error }}</div>
-
-      <form @submit.prevent="handleSubmit">
-        <div class="form-group">
-          <label>账号（邮箱或手机）</label>
-          <input v-model="account" type="text" required placeholder="请输入邮箱或手机号" />
+        <div v-if="isDev" class="auth-dev">
+          <span class="auth-dev__label">演示</span>
+          <button type="button" class="auth-dev__chip" @click="fillDemo('buyer')">买家</button>
+          <button type="button" class="auth-dev__chip" @click="fillDemo('seller')">卖家</button>
         </div>
-        <div class="form-group">
-          <label>密码</label>
-          <input v-model="password" type="password" required placeholder="至少 8 位" />
-        </div>
-        <button class="btn btn-commerce" type="submit" :disabled="auth.loading" style="width: 100%">
-          {{ auth.loading ? '登录中…' : '登录' }}
-        </button>
-        <LegalAgreementNotice v-if="legalTermsEnabled" mode="text" tag="p" />
-      </form>
 
-      <p class="footer-link">
-        还没有账号？<RouterLink to="/register">免费注册</RouterLink>
-      </p>
-      <p class="footer-link">
-        <RouterLink to="/">← 返回官网</RouterLink>
-      </p>
+        <div v-if="error" class="auth-alert auth-alert--error" role="alert">
+          <span>{{ displayError }}</span>
+        </div>
+
+        <form class="auth-form" @submit.prevent="handleSubmit">
+          <div class="form-group">
+            <label for="login-account">账号</label>
+            <input
+              id="login-account"
+              v-model="account"
+              type="text"
+              required
+              autocomplete="username"
+              placeholder="邮箱或手机号"
+            />
+          </div>
+          <div class="form-group">
+            <label for="login-password">密码</label>
+            <input
+              id="login-password"
+              v-model="password"
+              type="password"
+              required
+              autocomplete="current-password"
+              placeholder="至少 8 位"
+            />
+          </div>
+          <button class="btn btn-lg auth-submit" type="submit" :disabled="auth.loading">
+            {{ auth.loading ? '登录中…' : '登录' }}
+          </button>
+          <LegalAgreementNotice v-if="legalTermsEnabled" mode="text" tag="p" class="auth-legal" />
+        </form>
+
+        <footer class="auth-footer">
+          <p>还没有账号？<RouterLink to="/register">免费注册</RouterLink></p>
+          <RouterLink to="/" class="auth-back">← 返回官网</RouterLink>
+        </footer>
+      </div>
     </div>
   </div>
 </template>
@@ -48,7 +76,6 @@ import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { usePlatformStore } from '@/stores/platform'
 import AppIcon from '@/components/AppIcon.vue'
-import HelpTip from '@/components/HelpTip.vue'
 import LegalAgreementNotice from '@/components/LegalAgreementNotice.vue'
 
 const auth = useAuthStore()
@@ -63,17 +90,39 @@ const error = ref('')
 const legalTermsEnabled = computed(() => platform.legalTermsEnabled)
 const isDev = import.meta.env.DEV
 
+const displayError = computed(() => {
+  if (!error.value) return ''
+  if (error.value.includes('无法连接后端') || error.value.includes('Network Error') || error.value.includes('请求超时')) {
+    return error.value.includes('请求超时')
+      ? '请求超时，请再点一次登录'
+      : '无法连接服务器，请确认后端已启动'
+  }
+  return error.value
+})
+
+const demoAccounts = {
+  buyer: { account: 'buyer_qa@test.com', password: 'password123' },
+  seller: { account: 'seller_qa@test.com', password: 'password123' },
+} as const
+
 onMounted(() => {
   platform.fetchSettings()
 })
+
+function fillDemo(role: keyof typeof demoAccounts) {
+  const demo = demoAccounts[role]
+  account.value = demo.account
+  password.value = demo.password
+  error.value = ''
+}
 
 async function handleSubmit() {
   error.value = ''
   try {
     await auth.login(account.value, password.value)
     let redirect = (route.query.redirect as string) || (auth.isAdmin ? '/admin' : '/app/market')
-    if (redirect.includes('mode=ai') || redirect.includes('mode%3Dai')) {
-      redirect = '/app/intents/new?mode=ai'
+    if (redirect.includes('intents') || redirect.includes('matching')) {
+      redirect = '/app/market'
     }
     router.push(redirect)
   } catch (e) {
@@ -83,66 +132,126 @@ async function handleSubmit() {
 </script>
 
 <style scoped>
-.auth-page {
-  min-height: 100vh;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.auth-nav {
-  position: absolute;
-  top: 20px;
-  left: 24px;
+.auth-card__head {
+  margin-bottom: 20px;
 }
 
 .brand {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   font-weight: 700;
   font-size: 17px;
   color: var(--color-label);
   text-decoration: none;
+  letter-spacing: -0.02em;
 }
 
 .brand-icon {
   color: var(--color-primary);
 }
 
-.auth-card {
-  width: 100%;
-  max-width: 420px;
-  margin-top: 40px;
-}
-
 .auth-card h1 {
-  margin: 0 0 4px;
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
 .subtitle {
-  margin: 0 0 24px;
+  margin: 0 0 20px;
   color: var(--color-label-secondary);
   font-size: 15px;
+  line-height: 1.45;
 }
 
-.footer-link {
-  margin-top: 16px;
-  text-align: center;
-  color: var(--color-label-tertiary);
-  font-size: 15px;
+.auth-dev {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
 }
 
-.footer-hint {
-  margin-top: 8px;
-  text-align: center;
-  color: var(--color-label-tertiary);
+.auth-dev__label {
   font-size: 12px;
+  font-weight: 600;
+  color: var(--color-label-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.auth-dev__chip {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-fill);
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.auth-dev__chip:hover {
+  background: rgba(0, 122, 255, 0.12);
+}
+
+.auth-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.auth-alert--error {
+  background: rgba(255, 59, 48, 0.08);
+  color: var(--color-destructive);
+  border: 1px solid rgba(255, 59, 48, 0.15);
+}
+
+.auth-form :deep(.form-group input) {
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--glass-border);
+}
+
+.auth-submit {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.auth-legal {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--color-label-tertiary);
+  text-align: center;
+}
+
+.auth-footer {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-separator);
+  text-align: center;
+}
+
+.auth-footer p {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: var(--color-label-secondary);
+}
+
+.auth-back {
+  font-size: 14px;
+  color: var(--color-label-tertiary);
+  text-decoration: none;
+}
+
+.auth-back:hover {
+  color: var(--color-primary);
 }
 </style>

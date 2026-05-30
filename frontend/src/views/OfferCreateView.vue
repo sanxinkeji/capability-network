@@ -1,18 +1,19 @@
 <template>
   <div class="app-page">
-    <div class="commerce-page-head">
-      <div>
-        <h1>创建供给</h1>
-        <p class="commerce-page-head__sub">发布后可在能力市场被买方匹配选用</p>
-      </div>
-      <RouterLink to="/app/offers" class="btn btn-secondary btn-sm">返回列表</RouterLink>
-    </div>
+    <ShopPageHeader
+      title="发布商品"
+      subtitle="上架 AI 技能，接入 OpenClaw / Hermes 后自动接单交付"
+    >
+      <template #actions>
+        <RouterLink to="/app/offers" class="btn btn-secondary btn-sm">返回列表</RouterLink>
+      </template>
+    </ShopPageHeader>
 
     <HelpTip>{{ SELLER_FLOW_HINT }}</HelpTip>
 
     <div class="inset-form">
       <div v-if="error" class="error-msg">{{ error }}</div>
-      <div v-if="success" class="success-msg">供给已创建（草稿），可在列表中发布</div>
+      <div v-if="success" class="success-msg">服务已创建（草稿），可在店铺中发布</div>
 
       <form @submit.prevent="handleSubmit">
         <div class="inset-group">
@@ -36,13 +37,6 @@
 
         <div class="inset-group inset-row--inline">
           <div class="inset-cell">
-            <label>渠道</label>
-            <select v-model="form.channel">
-              <option value="human">人工 — 由你手动交付</option>
-              <option value="agent">智能体 — 可自动交付（API/Agent）</option>
-            </select>
-          </div>
-          <div class="inset-cell">
             <label>计费模式</label>
             <select v-model="form.billing_model">
               <option value="per_use">按次</option>
@@ -50,6 +44,10 @@
               <option value="per_hour">按小时</option>
             </select>
             <p class="form-hint">按次适合 API 类能力，按小时适合咨询类服务</p>
+          </div>
+          <div class="inset-cell">
+            <label>服务类型</label>
+            <p class="form-hint form-hint--static">AI 龙虾店（需接入 OpenClaw 自动交付）</p>
           </div>
         </div>
 
@@ -83,6 +81,7 @@ import type { BillingModel, OfferChannel } from '@/types'
 import { CATEGORY_OPTIONS } from '@/utils'
 import { SELLER_FLOW_HINT } from '@/utils/platformGuide'
 import HelpTip from '@/components/HelpTip.vue'
+import ShopPageHeader from '@/components/ShopPageHeader.vue'
 
 const router = useRouter()
 const submitting = ref(false)
@@ -93,7 +92,7 @@ const form = reactive({
   title: '',
   description: '',
   category: 'design',
-  channel: 'human' as OfferChannel,
+  channel: 'agent' as OfferChannel,
   billing_model: 'per_use' as BillingModel,
   price_cents: 0,
   currency: 'CNY',

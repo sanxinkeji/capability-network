@@ -1,66 +1,36 @@
-/** 平台核心流程说明（应用内复用） */
-export const PLATFORM_TAGLINE =
-  '能力网络：发布能力 → 发需求匹配 → 下单托管 → 验收放款'
+/** 平台核心流程（淘宝式：逛店 → 下单 → 聊天 → 收货） */
+export const PLATFORM_TAGLINE = '搜商品 → 立即购买 → 付款进聊天 → 确认收货放款'
 
 export const PLATFORM_STEPS = [
-  {
-    key: 'market',
-    label: '逛市场',
-    desc: '浏览人工/智能体能力',
-    to: '/app/market',
-  },
-  {
-    key: 'intent',
-    label: '发需求',
-    desc: 'AI 描述要什么',
-    to: '/app/intents/new?mode=ai',
-  },
-  {
-    key: 'match',
-    label: '匹配下单',
-    desc: '选供给并创建订单',
-    to: '/app/intents',
-  },
-  {
-    key: 'wallet',
-    label: '钱包充值',
-    desc: '余额支付与托管',
-    to: '/app/wallet',
-  },
-  {
-    key: 'sell',
-    label: '发布供给',
-    desc: '卖方上架能力',
-    to: '/app/offers',
-  },
+  { key: 'market', label: '逛首页', desc: '搜 AI 技能', to: '/app/market' },
+  { key: 'buy', label: '立即购买', desc: '详情页下单', to: '/app/market' },
+  { key: 'chat', label: '联系店家', desc: '付完款进聊天', to: '/app/deals' },
+  { key: 'confirm', label: '确认收货', desc: '满意再放款', to: '/app/deals' },
 ] as const
 
 export const BUYER_FLOW_HINT =
-  '买方路径：逛市场或发需求 → 匹配候选 → 下单支付（钱包扣款/冻结）→ 验收确认 → 卖方收款'
+  '买家：逛首页选服务 → 立即购买付款 → 进聊天沟通细节 → 确认收货 → 平台放款给 AI 店家'
 
 export const SELLER_FLOW_HINT =
-  '卖方路径：发布供给 → 等待匹配/被选用 → 交付内容 → 买方确认后结算入账'
+  '卖家（AI 龙虾 / OpenClaw / Hermes）：上架商品 → 接入自动接单 → 买家确认后收款'
 
 export const WALLET_FLOW_STEPS = [
   { label: '充值', desc: '微信/支付宝充值到可用余额' },
-  { label: '下单', desc: '支付时从余额扣款，资金进入冻结' },
-  { label: '验收', desc: '确认收货后放款给卖方（平台收取佣金）' },
-  { label: '提现', desc: '卖方可将可用余额提现到账户' },
+  { label: '下单', desc: '付款后资金平台托管，确认收货再放款' },
+  { label: '验收', desc: '满意后确认，店家收款（平台收取佣金）' },
+  { label: '提现', desc: '卖家可将余额提现到账户' },
 ] as const
 
 export const WALLET_TERMS = {
-  frozen: '下单支付后，款项暂存平台托管账户，待验收后结算。',
+  frozen: '下单付款后，款项由平台托管，确认收货后才结算给卖家。',
   nonWithdrawable: '部分活动赠送或点数类资产不可提现，仅可用于平台消费。',
-  commission: '平台按成交收取约 10% 佣金（以运营设置为准），其余结算给卖方。',
+  commission: '平台按成交收取约 10% 佣金（以运营设置为准），其余结算给卖家。',
 } as const
 
 export const MARKET_BUY_HINT =
-  '「立即选用」会帮你创建需求并进入匹配，不是直接付款。确认供给后才会从钱包扣款。'
+  '像淘宝一样：点进商品详情 → 立即购买 → 付款后自动进入与 AI 店家的聊天。'
 
-export const MATCH_PAY_HINT =
-  '点击后将创建订单并尝试从钱包支付。余额不足会进入待支付，请先到钱包充值。'
-
-export const ONBOARDING_STORAGE_KEY = 'cn_onboarding_dismissed_v1'
+export const ONBOARDING_STORAGE_KEY = 'cn_onboarding_dismissed_v3'
 
 export function formatAgentKeyStatus(status: string): string {
   const map: Record<string, string> = {

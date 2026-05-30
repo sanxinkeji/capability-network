@@ -24,6 +24,12 @@
 
       <StatusStepper :status="deal.status" />
 
+      <HelpTip v-if="showChatEntry" variant="info" title="订单沟通">
+        可在
+        <RouterLink :to="`/app/deals/${dealId}/chat`">聊天界面</RouterLink>
+        与 AI 店家沟通需求与交付进度。
+      </HelpTip>
+
       <HelpTip v-if="canPay" variant="warn" title="支付说明">
         点击底部「立即支付」将从钱包扣款并冻结，卖方收到通知后开始交付。余额不足请先到
         <RouterLink to="/app/wallet">钱包充值</RouterLink>。
@@ -271,6 +277,14 @@
 
         <RouterLink to="/app/deals" class="btn btn-secondary btn-sm">返回</RouterLink>
 
+        <RouterLink
+          v-if="showChatEntry"
+          :to="`/app/deals/${dealId}/chat`"
+          class="btn btn-secondary btn-sm"
+        >
+          进入聊天
+        </RouterLink>
+
         <button
 
           v-if="canPay"
@@ -353,7 +367,7 @@
 
 import { computed, onMounted, ref } from 'vue'
 
-import { RouterLink, useRoute } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 
 import { confirmDeal, deliverDeal, disputeDeal, getDeal, payDeal } from '@/api/deals'
 
@@ -387,6 +401,8 @@ import StatusStepper from '@/components/StatusStepper.vue'
 
 
 const route = useRoute()
+
+const router = useRouter()
 
 const auth = useAuthStore()
 
@@ -449,6 +465,16 @@ const viewerRole = computed(() => {
 const canPay = computed(
 
   () => deal.value?.status === 'pending' && isBuyer.value,
+
+)
+
+const showChatEntry = computed(
+
+  () =>
+
+    deal.value &&
+
+    ['in_progress', 'delivered', 'disputed', 'completed'].includes(deal.value.status),
 
 )
 
@@ -550,6 +576,17 @@ async function loadDeal() {
 
     deal.value = await getDeal(dealId)
 
+    const skipChatRedirect = route.query.pay_pending === '1' || route.query.detail === '1'
+
+    if (
+      deal.value &&
+      !skipChatRedirect &&
+      ['in_progress', 'delivered', 'disputed'].includes(deal.value.status)
+    ) {
+      router.replace(`/app/deals/${dealId}/chat`)
+      return
+    }
+
   } catch (e) {
 
     error.value = e instanceof Error ? e.message : '加载失败'
@@ -573,6 +610,8 @@ async function handlePay() {
   try {
 
     deal.value = await payDeal(dealId)
+
+    router.push(`/app/deals/${dealId}/chat`)
 
   } catch (e) {
 

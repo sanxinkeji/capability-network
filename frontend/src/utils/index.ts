@@ -41,16 +41,21 @@ export function statusLabel(status: string): string {
     matching: '匹配中',
     matched: '已匹配',
     closed: '已关闭',
-    pending: '待支付',
-    paid: '已支付',
-    in_progress: '进行中',
-    delivered: '已交付',
-    completed: '已完成',
-    disputed: '争议中',
+    pending: '待付款',
+    paid: '待发货',
+    in_progress: '待发货',
+    delivered: '待收货',
+    completed: '交易成功',
+    disputed: '退款/售后',
     refunded: '已退款',
-    cancelled: '已取消',
+    cancelled: '交易关闭',
   }
   return map[status] ?? status
+}
+
+/** 买家订单列表状态（淘宝用语） */
+export function buyerDealStatusLabel(status: string): string {
+  return statusLabel(status)
 }
 
 export type DealViewerRole = 'buyer' | 'seller' | 'other'
@@ -131,8 +136,9 @@ export function dealListActionLabel(
   status: string,
   role: DealViewerRole,
 ): string | null {
-  if (role === 'buyer' && status === 'pending') return '去支付'
+  if (role === 'buyer' && status === 'pending') return '去付款'
   if (role === 'buyer' && status === 'delivered') return '确认收货'
+  if (role === 'buyer' && (status === 'paid' || status === 'in_progress')) return '联系店家'
   if (role === 'seller' && (status === 'in_progress' || status === 'paid')) return '去交付'
   return null
 }
@@ -143,8 +149,9 @@ export const CATEGORY_OPTIONS = [
   { value: 'data', label: '数据' },
   { value: 'dev', label: '开发' },
   { value: 'content', label: '内容' },
+  { value: 'writing', label: '写作' },
   { value: 'consulting', label: '咨询' },
-  { value: 'ai', label: 'AI 能力' },
+  { value: 'ai', label: 'AI 技能' },
 ] as const
 
 export function categoryLabel(category: string): string {
@@ -154,10 +161,10 @@ export function categoryLabel(category: string): string {
 
 export function channelLabel(channel: string): string {
   const map: Record<string, string> = {
-    human: '人工服务',
-    agent: '智能体',
+    agent: 'AI 龙虾店',
+    human: 'AI 龙虾店',
   }
-  return map[channel] ?? channel
+  return map[channel] ?? 'AI 龙虾店'
 }
 
 /** 将 AI 解析返回的 category 映射为平台标准 key */

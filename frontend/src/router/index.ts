@@ -82,43 +82,25 @@ const router = createRouter({
           path: 'market',
           name: 'market',
           component: () => import('@/views/MarketView.vue'),
-          meta: { title: '能力市场' },
+          meta: { title: '首页' },
+        },
+        {
+          path: 'market/:offerId',
+          name: 'offer-detail',
+          component: () => import('@/views/OfferDetailView.vue'),
+          meta: { title: '商品详情' },
         },
         {
           path: 'offers',
           name: 'offers',
           component: () => import('@/views/OffersView.vue'),
-          meta: { title: '我的供给' },
+          meta: { title: '商品管理', requiresSeller: true },
         },
         {
           path: 'offers/new',
           name: 'offer-create',
           component: () => import('@/views/OfferCreateView.vue'),
-          meta: { title: '发布供给' },
-        },
-        {
-          path: 'intents',
-          name: 'intents',
-          component: () => import('@/views/IntentsView.vue'),
-          meta: { title: '我的需求' },
-        },
-        {
-          path: 'intents/new',
-          name: 'intent-create',
-          component: () => import('@/views/IntentCreateView.vue'),
-          meta: { title: '发布需求' },
-        },
-        {
-          path: 'matching/:intentId',
-          name: 'matching',
-          component: () => import('@/views/MatchingView.vue'),
-          meta: { title: '匹配结果' },
-        },
-        {
-          path: 'auctions/:intentId',
-          name: 'auction-room',
-          component: () => import('@/views/AuctionRoomView.vue'),
-          meta: { title: '竞价室' },
+          meta: { title: '发布商品', requiresSeller: true },
         },
         {
           path: 'deals',
@@ -133,16 +115,40 @@ const router = createRouter({
           meta: { title: '订单详情' },
         },
         {
+          path: 'deals/:dealId/chat',
+          name: 'deal-chat',
+          component: () => import('@/views/DealChatView.vue'),
+          meta: { title: '订单沟通' },
+        },
+        {
           path: 'wallet',
           name: 'wallet',
           component: () => import('@/views/WalletView.vue'),
           meta: { title: '我的钱包' },
         },
         {
+          path: 'me',
+          name: 'me',
+          component: () => import('@/views/MeView.vue'),
+          meta: { title: '我的' },
+        },
+        {
+          path: 'shop/apply',
+          name: 'shop-apply',
+          component: () => import('@/views/ShopApplyView.vue'),
+          meta: { title: '我要开店' },
+        },
+        {
+          path: 'seller',
+          name: 'seller-hub',
+          component: () => import('@/views/SellerHubView.vue'),
+          meta: { title: '卖家中心', requiresSeller: true },
+        },
+        {
           path: 'agent',
           name: 'agent-settings',
           component: () => import('@/views/AgentSettingsView.vue'),
-          meta: { title: 'Agent 接入' },
+          meta: { title: '开店助手', requiresSeller: true },
         },
       ],
     },
@@ -212,6 +218,12 @@ const router = createRouter({
           meta: { title: '实名审核' },
         },
         {
+          path: 'shop-applications',
+          name: 'admin-shop-applications',
+          component: () => import('@/views/admin/AdminShopApplicationsView.vue'),
+          meta: { title: '入驻审核' },
+        },
+        {
           path: 'finance',
           name: 'admin-finance',
           component: () => import('@/views/admin/AdminFinanceView.vue'),
@@ -256,13 +268,17 @@ const router = createRouter({
       ],
     },
     // 旧路径兼容
-    { path: '/offers', redirect: '/app/offers' },
-    { path: '/offers/new', redirect: '/app/offers/new' },
-    { path: '/intents', redirect: '/app/intents' },
-    { path: '/intents/new', redirect: '/app/intents/new' },
+    { path: '/offers', redirect: '/app/shop/apply' },
+    { path: '/offers/new', redirect: '/app/shop/apply' },
+    { path: '/intents', redirect: '/app/market' },
+    { path: '/intents/new', redirect: '/app/market' },
+    { path: '/app/intents', redirect: '/app/market' },
+    { path: '/app/intents/new', redirect: '/app/market' },
+    { path: '/app/matching/:intentId', redirect: '/app/market' },
+    { path: '/app/auctions/:intentId', redirect: '/app/market' },
     { path: '/deals', redirect: '/app/deals' },
     { path: '/wallet', redirect: '/app/wallet' },
-    { path: '/matching/:intentId', redirect: (to) => `/app/matching/${to.params.intentId}` },
+    { path: '/matching/:intentId', redirect: '/app/market' },
     { path: '/deals/:dealId', redirect: (to) => `/app/deals/${to.params.dealId}` },
   ],
 })
@@ -305,19 +321,26 @@ router.beforeEach(async (to) => {
     await platform.fetchSettings()
   }
   if (to.name === 'wallet' && !platform.featureWalletEnabled) {
-    return { path: '/app/market' }
+    return { path: '/app/me' }
   }
   if (to.name === 'market' && !platform.featureMarketplaceEnabled) {
     return { path: '/app/deals' }
   }
-  if (to.name === 'matching' && !platform.featureMatchingEnabled) {
-    return { path: '/app/deals' }
-  }
-  if (to.name === 'auction-room' && !platform.featureMatchingEnabled) {
-    return { path: '/app/deals' }
-  }
   if (to.name === 'agent-settings' && !platform.featureAgentEnabled) {
-    return { path: '/app/deals' }
+    return { path: '/app/me' }
+  }
+  if (to.meta.requiresSeller) {
+    const auth = useAuthStore()
+    if (!auth.user) {
+      try {
+        await auth.fetchProfile()
+      } catch {
+        return { name: 'login', query: { redirect: to.fullPath } }
+      }
+    }
+    if (!auth.isSeller) {
+      return { name: 'shop-apply', query: { redirect: to.fullPath } }
+    }
   }
 })
 

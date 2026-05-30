@@ -84,6 +84,10 @@ class OfferResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class MarketplaceOfferResponse(OfferResponse):
+    seller_display_name: str | None = None
+
+
 def build_tags_payload(
     *,
     channel: OfferChannel,

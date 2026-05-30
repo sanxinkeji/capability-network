@@ -4,6 +4,10 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
+from sqlalchemy import select
+
+from app.auth.constants import UserRole
+from app.auth.models import User
 from app.core.database import Base, get_db
 from app.deals.tasks import clear_scheduled_tasks
 from app.deals.webhooks import clear_registry
@@ -35,6 +39,7 @@ async def client():
     fastapi_app.dependency_overrides[get_db] = override_get_db
     transport = ASGITransport(app=fastapi_app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        ac.session_factory = session_factory
         yield ac
     fastapi_app.dependency_overrides.clear()
     clear_scheduled_tasks()
@@ -43,6 +48,14 @@ async def client():
 
 def _auth(token: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {token}"}
+
+
+async def _promote_seller(session_factory, *, suffix: str) -> None:
+    email = f"deals-{suffix}@example.com"
+    async with session_factory() as db:
+        user = (await db.execute(select(User).where(User.email == email))).scalar_one()
+        user.role = UserRole.SELLER
+        await db.commit()
 
 
 async def _register(client: AsyncClient, *, suffix: str) -> str:
@@ -133,6 +146,7 @@ async def test_list_deals_empty_for_new_user(client: AsyncClient):
 async def test_list_deals_includes_deal_for_buyer_and_seller(client: AsyncClient):
     buyer_token = await _register(client, suffix="buyer-list")
     seller_token = await _register(client, suffix="seller-list")
+    await _promote_seller(client.session_factory, suffix="seller-list")
     deal_id = await _create_deal_via_match(client, buyer_token, seller_token)
 
     buyer_resp = await client.get(f"{API}/deals?page=1&page_size=10", headers=_auth(buyer_token))
@@ -155,6 +169,7 @@ async def test_list_deals_not_visible_to_unrelated_user(client: AsyncClient):
     buyer_token = await _register(client, suffix="buyer-only")
     seller_token = await _register(client, suffix="seller-only")
     other_token = await _register(client, suffix="other")
+    await _promote_seller(client.session_factory, suffix="seller-only")
     await _create_deal_via_match(client, buyer_token, seller_token)
 
     other_resp = await client.get(f"{API}/deals", headers=_auth(other_token))
